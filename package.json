@@ -1,0 +1,19 @@
+{
+	"name": "jvc-ptz",
+	"version": "0.0.1",
+	"api_version": "1.0.0",
+	"keywords": [
+		"camera",
+		"ptz"
+		],
+	"manufacturer": "JVC",
+	"product": "camera",
+	"shortname": "JVC ptz",
+	"description": "JVC web API plugin for Companion",
+	"main": "index.js",
+	"scripts": {
+		"test": "echo \"Error: no test specified\" && exit 1"
+	},
+	"author": "Jeffrey Davidsz <jeffrey.davidsz@vicreo.eu>",
+	"license": "MIT"
+}
