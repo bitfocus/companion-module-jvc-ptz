@@ -1,9 +1,8 @@
-let tcp           = require('../../tcp');
 let instance_skel = require('../../instance_skel');
 let actions       = require('./actions');
-
-let debug;
+let urllib        = require('urllib');
 let log;
+let debug;
 let sessionID = null;
 
 class instance extends instance_skel {
@@ -20,46 +19,28 @@ class instance extends instance_skel {
 		this.setActions(this.getActions());
 	}
 
-	init_tcp() {
-		var host = this.config.host;
-		var port = this.config.port;
-
-		if (this.config.host !== undefined) {
-			this.tcp = new tcp(host, port);
-
-			this.tcp.on('status_change', (status, message) => {
-				this.status(status, message);
-			});
-
-			this.tcp.on('error', (err) => {
-				debug("Network error", err);
-				this.log('error',"Network error: " + err.message);
-			});
-
-			this.tcp.on('connect', () => {
-				debug("Connected");
-				this.authenticationCamera()
-			});
-
-			this.tcp.on('data', (data) => {
-				console.log(data);
-				if(data.match(/Unauthorized/)) { // response to request
-					let nonce = data.slice(data.find('nonce=')+7, data.find('blabla'))
-					this.tcp.send(`GET /api.php HTTP/1.1\r\nHost: ${this.config.host}\r\nUser-Agent: Mozilla/5.0 (Windows NT 5.1; rv:27.0) Gecko/20100101 Firefox/27.0\r\nAccept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8\r\nAccept-Language: ja,en-us;q=0.7,en;q=0.3\r\nAccept-Encoding: gzip, deflate\r\nConnection: keep-alive\r\nAuthorization: Digest username="${this.config.username}", realm="GY-HM650",nonce="${nonce}", uri="/api.php",response="0f4d23f739a0e9fa3b78b826b33edaf8",qop=auth, nc=00000001,cnonce="ee16206547e4dd0e"\r\n\r\n`)
-				} else if (data.match(/302 Found/)) { // here comes session ID
-					sessionID = data.slice(data.find('SessionID='),data.find('SessionID=')+1234)
-				}
-			})
+	init_connection() {
+		if (this.config.host !== undefined && this.config.username !== undefined && this.config.password !== undefined) {
+			this.processAuthentication()
+		} else {
+			this.system.emit('error', 'Apply instance settings')
 		}
 	}
 
-	authenticationCamera() {
-		if (this.tcp !== undefined) {
-			this.tcp.send(`GET /api.php HTTP/1.1\r\nHost: ${this.config.host}\r\nUser-Agent: Mozilla/5.0 (Windows NT 5.1; rv:27.0) Gecko/20100101 Firefox/27.0\r\nAccept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8\r\nAccept-Language: ja,en-us;q=0.7,en;q=0.3\r\nAccept-Encoding: gzip, deflate\r\nConnection: keep-alive\r\n\r\n`);
-		} else {
-			debug('Socket not connected. ProTally may not be active at the destination host/port.');
-		}
+	processAuthentication() {
+		this.status(this.STATUS_WARNING,'Logging in');
+		urllib.request(this.config.host + '/api.php',{digestAuth:`${this.config.username}:${this.config.password}`}).then((result) => {
+			// store header information
+			let headersObj = result.res.headers
+			this.sessionID = headersObj['set-cookie'][1].slice(10)
 
+			this.status(this.STATUS_OK);
+			let getSystemInfo = {}
+			this.sendCommand(getSystemInfo.Request = {"Command":"GetSystemInfo","SessionID":this.sessionID})
+			this.system.emit('log', 'JVC', 'info', 'sessionID: ' + this.sessionID)
+		}).catch(function (err) {
+			this.system.emit('error', 'Error: ' + err)
+		});
 	}
 
 	config_fields() {
@@ -69,7 +50,7 @@ class instance extends instance_skel {
 				id: 'info',
 				width: 12,
 				label: 'Information',
-				value: 'This module for the JVC PTZ cameras.'
+				value: 'This module is for the JVC PTZ camera\'s.'
 			},
 			{
 				type: 'textinput',
@@ -80,38 +61,104 @@ class instance extends instance_skel {
 			},
 			{
 				type: 'textinput',
-				id: 'port',
-				label: 'Target Port',
-				default: '80',
-				width: 5,
-				regex: self.REGEX_PORT
+				id: 'username',
+				label: 'Username',
+				default: 'jvc',
+				width: 5
+			},
+			{
+				type: 'textinput',
+				id: 'password',
+				label: 'Password',
+				default: '0000',
+				width: 5
 			}
 		]
 	}
 
 	action(action) {
 		let id = action.action;
-		let cmd;
 		let opt = action.options;
 		let jvcPTZObj = {}
 
 		switch (id){
-			case 'systemInfo':
-					jvcPTZObj.Request = {"Command":"GetSystemInfo"},{"SessionID":sessionID}
-					break
+			case 'getCamStatus':
+				jvcPTZObj.Request = {"Command":"GetCamStatus","SessionID":this.sessionID}
+				break
+
+			case 'setGain':
+				jvcPTZObj.Request = {"Command":"Gain"}
+				break
+
+			case 'setZoomCtrl':
+				jvcPTZObj.Request = {"Command":"SetZoomCtrl","SessionID":this.sessionID,"Params":{"Position":opt.position}}
+				break
+
+			case 'setPresetZoomPosition':
+				jvcPTZObj.Request = {"Command":"SetPresetZoomPosition","SessionID":this.sessionID,"Params":{"ID":opt.positionStore,"Position":opt.position}}
+				break
+
+			case 'gain':
+				jvcPTZObj.Request = {"Command":"SetWebButtonEvent","SessionID":this.sessionID,"Params":{"Kind":"Gain","Button":opt.button}}
+				break
+
+			case 'whb':
+				jvcPTZObj.Request = {"Command":"SetWebButtonEvent","SessionID":this.sessionID,"Params":{"Kind":"Whb","Button":opt.button}}
+				break
+
+			case 'zoom':
+				jvcPTZObj.Request = {"Command":"SetWebButtonEvent","SessionID":this.sessionID,"Params":{"Kind":"Zoom","Button":opt.button}}
+				break
+
+			case 'focus':
+				jvcPTZObj.Request = {"Command":"SetWebButtonEvent","SessionID":this.sessionID,"Params":{"Kind":"Focus","Button":opt.button}}
+				break
+
+			case 'exposure':
+				jvcPTZObj.Request = {"Command":"SetWebButtonEvent","SessionID":this.sessionID,"Params":{"Kind":"Exposure","Button":opt.button}}
+				break
 		}
 
-		//send the object
-		if (jvcPTZObj.Request !== undefined) {
-			if (this.tcp !== undefined) {
-				console.log(JSON.stringify(jvcPTZObj));
-				console.log(jvcPTZObj);
-				this.tcp.send(JSON.stringify(jvcPTZObj));
-			} else {
-				debug('Socket not connected. PTZ may not be active at the destination host/port.');
-			}
+		if(this.isEmpty(jvcPTZObj)){
+			this.system.emit('error','no command, array empty');
+		} else {
+			this.sendCommand(jvcPTZObj)
 		}
 
+	}
+	sendCommand(jvcPTZObj) {
+		// console.log(JSON.stringify(jvcPTZObj))
+
+		urllib.request(this.config.host + '/cgi-bin/api.cgi',{
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json'
+			},
+			content: JSON.stringify(jvcPTZObj)
+		}).then((result) => {
+			// result: {data: buffer, res: response object}
+			let resObj = result.res.data
+			this.processIncomingData(resObj)
+		}).catch(function (err) {
+			log('error','JVC Error: '+err);
+		});
+	}
+
+	processIncomingData(data) {
+		let resultObj = JSON.parse(data)
+		// console.log(resultObj.Response);
+		if(resultObj.Response['Requested'] === 'GetSystemInfo') {
+			this.setVariable('model', resultObj.Response.Data['Model'])
+			this.setVariable('serial', resultObj.Response.Data['Serial'])
+		}
+	}
+
+	isEmpty(obj) {
+		for(var key in obj) {
+				if(obj.hasOwnProperty(key))
+						return false;
+		}
+		return true;
 	}
 
 	destroy() {
@@ -122,14 +169,14 @@ class instance extends instance_skel {
 		debug = this.debug;
 		log = this.log;
 
-		//this.init_variables()
-		this.init_tcp()
+		this.init_variables()
+		this.init_connection()
 	}
 
 	updateConfig(config) {
 
 		this.config = config
-
+		this.init_connection()
 		this.actions()
 
 	}
@@ -137,8 +184,8 @@ class instance extends instance_skel {
 	init_variables() {
 
 		var variables = [
-			{ name: 'dynamic1', label: 'dynamic variable' },
-			// { name: 'dynamic2', label: 'dynamic var2' },
+			{ name: 'model', label: 'Camera model' },
+			{ name: 'serial', label: 'Camera serial' }
 		]
 
 		this.setVariableDefinitions(variables)

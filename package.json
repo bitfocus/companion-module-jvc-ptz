@@ -5,7 +5,7 @@
 	"keywords": [
 		"camera",
 		"ptz"
-		],
+	],
 	"manufacturer": "JVC",
 	"product": "camera",
 	"shortname": "JVC ptz",
@@ -15,5 +15,9 @@
 		"test": "echo \"Error: no test specified\" && exit 1"
 	},
 	"author": "Jeffrey Davidsz <jeffrey.davidsz@vicreo.eu>",
-	"license": "MIT"
+	"license": "MIT",
+	"dependencies": {
+		"bluebird": "^3.7.2",
+		"urllib": "^2.34.2"
+	}
 }
