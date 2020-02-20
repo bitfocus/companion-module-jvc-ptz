@@ -73,13 +73,6 @@ class instance extends instance_skel {
 				label: 'Password',
 				default: '0000',
 				width: 5
-			},
-			{
-				type: 'textinput',
-				id: 'model',
-				label: 'Model',
-				default: 'not connected',
-				width: 5
 			}
 		]
 	}
