@@ -1,5 +1,6 @@
 let instance_skel = require('../../instance_skel');
 let actions       = require('./actions');
+let presets       = require('./presets');
 let urllib        = require('urllib');
 let log;
 let debug;
@@ -10,7 +11,7 @@ class instance extends instance_skel {
 	constructor(system,id,config) {
 		super(system,id,config)
 
-		Object.assign(this, {...actions})
+		Object.assign(this, {...actions,...presets})
 
 		this.actions()
 	}
@@ -72,6 +73,13 @@ class instance extends instance_skel {
 				label: 'Password',
 				default: '0000',
 				width: 5
+			},
+			{
+				type: 'textinput',
+				id: 'model',
+				label: 'Model',
+				default: 'not connected',
+				width: 5
 			}
 		]
 	}
@@ -114,8 +122,28 @@ class instance extends instance_skel {
 				jvcPTZObj.Request = {"Command":"SetWebButtonEvent","SessionID":this.sessionID,"Params":{"Kind":"Focus","Button":opt.button}}
 				break
 
+			case 'iris':
+				jvcPTZObj.Request = {"Command":"SetWebButtonEvent","SessionID":this.sessionID,"Params":{"Kind":"Iris","Button":opt.button}}
+				break
+
 			case 'exposure':
 				jvcPTZObj.Request = {"Command":"SetWebButtonEvent","SessionID":this.sessionID,"Params":{"Kind":"Exposure","Button":opt.button}}
+				break
+
+			case 'joyStickOperationPan':
+				jvcPTZObj.Request = {"Command":"JoyStickOperation","SessionID":this.sessionID,"Params":{"PanDirection":opt.direction,"PanSpeed":opt.speed, "TiltDirection":"stop", "TiltSpeed":"0"}}
+				break
+
+			case 'joyStickOperationTilt':
+				jvcPTZObj.Request = {"Command":"JoyStickOperation","SessionID":this.sessionID,"Params":{"PanDirection":"Stop","PanSpeed":"0", "TiltDirection":opt.direction, "TiltSpeed":opt.speed}}
+				break
+
+			case 'setPTZPreset':
+				jvcPTZObj.Request = {"Command":"SetPTZPreset","SessionID":this.sessionID,"Params":{"No":opt.preset,"Operation":opt.operation}}
+				break
+
+			case 'zoomSwitchOperation':
+				jvcPTZObj.Request = {"Command":"ZoomSwitchOperation","SessionID":this.sessionID,"Params":{"Direction":opt.direction,"Speed":opt.speed}}
 				break
 		}
 
@@ -127,7 +155,7 @@ class instance extends instance_skel {
 
 	}
 	sendCommand(jvcPTZObj) {
-		// console.log(JSON.stringify(jvcPTZObj))
+		console.log(JSON.stringify(jvcPTZObj))
 
 		urllib.request(this.config.host + '/cgi-bin/api.cgi',{
 			method: 'POST',
@@ -146,9 +174,10 @@ class instance extends instance_skel {
 
 	processIncomingData(data) {
 		let resultObj = JSON.parse(data)
-		// console.log(resultObj.Response);
+		console.log(resultObj.Response);
 		if(resultObj.Response['Requested'] === 'GetSystemInfo') {
 			this.setVariable('model', resultObj.Response.Data['Model'])
+			this.config.model = resultObj.Response.Data['Model']
 			this.setVariable('serial', resultObj.Response.Data['Serial'])
 		}
 	}
@@ -171,6 +200,7 @@ class instance extends instance_skel {
 
 		this.init_variables()
 		this.init_connection()
+		this.initPresets();
 	}
 
 	updateConfig(config) {
@@ -190,6 +220,11 @@ class instance extends instance_skel {
 
 		this.setVariableDefinitions(variables)
 
+	}
+
+	initPresets(updates) {
+
+		this.setPresetDefinitions(this.getPresets());
 	}
 
 }
