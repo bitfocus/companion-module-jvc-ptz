@@ -51,7 +51,7 @@ class instance extends instance_skel {
 				id: 'info',
 				width: 12,
 				label: 'Information',
-				value: 'This module is for the JVC PTZ camera\'s.'
+				value: 'This module is for the JVC PTZ KZ100 camera\'s. Some functions may not work on different models.'
 			},
 			{
 				type: 'textinput',
