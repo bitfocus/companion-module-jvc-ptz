@@ -13,7 +13,7 @@ exports.getActions = function() {
 				choices: [{ label: 'Left', id: 'Left'},{ label: 'Right', id: 'Right'},{ label: 'Stop', id: 'Stop'}]
 			},
 			{
-				label: 'Select speed',
+				label: 'Select speed (0-100)',
 				type: 'textinput',
 				id: 'speed',
 				default: '15',
@@ -33,7 +33,7 @@ exports.getActions = function() {
 				choices: [{ label: 'Up', id: 'Up'},{ label: 'Down', id: 'Down'},{ label: 'Stop', id: 'Stop'}]
 			},
 			{
-				label: 'Select speed',
+				label: 'Select speed (0-100)',
 				type: 'textinput',
 				id: 'speed',
 				default: '15',
@@ -66,7 +66,7 @@ exports.getActions = function() {
 				choices: [{ label: 'Stop', id: 'Stop'},{ label: 'Tele', id: 'Tele'},{ label: 'Wide', id: 'Wide'}]
 			},
 			{
-				label: 'Speed',
+				label: 'Speed (0-8)',
 				type: 'textinput',
 				id: 'speed',
 				default: '2',
@@ -144,7 +144,7 @@ exports.getActions = function() {
 		label: 'Preset operations',
 		options: [
 			{
-				label: 'Preset number 1-100',
+				label: 'Preset number (1-100)',
 				type: 'textinput',
 				id: 'preset',
 				default: '1',
@@ -164,7 +164,7 @@ exports.getActions = function() {
 	actions['setZoomCtrl'] = {
 		label: 'Set zoom position',
 		options: [{
-			label: 'postion 0-499',
+			label: 'postion (0-499)',
 			type: 'textinput',
 			id: 'position',
 			default: '350',
@@ -176,13 +176,13 @@ exports.getActions = function() {
 		label: 'Set preset zoom position in memory',
 		options: [
 		{
-			label: 'postion A B C D',
+			label: 'postion (A B C D)',
 			type: 'dropdown',
 			id: 'positionStore',
 			default: 'A',
 			choices: [{label:'A', id:'A'},{label:'B', id:'B'},{label:'C', id:'C'},{label:'D', id:'D'}]
 		},{
-			label: 'postion 0-499',
+			label: 'postion (0-499)',
 			type: 'textinput',
 			id: 'position',
 			default: '350',
