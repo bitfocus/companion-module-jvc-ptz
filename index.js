@@ -24,7 +24,7 @@ class instance extends instance_skel {
 		if (this.config.host !== undefined && this.config.username !== undefined && this.config.password !== undefined) {
 			this.processAuthentication()
 		} else {
-			this.system.emit('error', 'Apply instance settings')
+			this.system.emit('log','jvc','error', 'Apply instance settings')
 		}
 	}
 
@@ -141,15 +141,13 @@ class instance extends instance_skel {
 		}
 
 		if(this.isEmpty(jvcPTZObj)){
-			this.system.emit('error','no command, array empty');
+			this.system.emit('log','jvc', 'error','no command, array empty');
 		} else {
 			this.sendCommand(jvcPTZObj)
 		}
 
 	}
 	sendCommand(jvcPTZObj) {
-		console.log(JSON.stringify(jvcPTZObj))
-
 		urllib.request(this.config.host + '/cgi-bin/api.cgi',{
 			method: 'POST',
 			headers: {
@@ -161,16 +159,14 @@ class instance extends instance_skel {
 			let resObj = result.res.data
 			this.processIncomingData(resObj)
 		}).catch(function (err) {
-			log('error','JVC Error: '+err);
+			log('log','jvc', 'error','Error: '+err);
 		});
 	}
 
 	processIncomingData(data) {
 		let resultObj = JSON.parse(data)
-		console.log(resultObj.Response);
 		if(resultObj.Response['Requested'] === 'GetSystemInfo') {
 			this.setVariable('model', resultObj.Response.Data['Model'])
-			this.config.model = resultObj.Response.Data['Model']
 			this.setVariable('serial', resultObj.Response.Data['Serial'])
 		}
 	}
@@ -190,7 +186,6 @@ class instance extends instance_skel {
 	init() {
 		debug = this.debug;
 		log = this.log;
-
 		this.init_variables()
 		this.init_connection()
 		this.initPresets();
