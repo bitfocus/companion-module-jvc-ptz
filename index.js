@@ -138,6 +138,14 @@ class instance extends instance_skel {
 			case 'zoomSwitchOperation':
 				jvcPTZObj.Request = {"Command":"ZoomSwitchOperation","SessionID":this.sessionID,"Params":{"Direction":opt.direction,"Speed":opt.speed}}
 				break
+
+			case 'SetCamCtrl':
+				jvcPTZObj.Request = {"Command":"SetCamCtrl","SessionID":this.sessionID,"Params":{"CamCtrl":opt.ctrl}}
+				break
+
+			case 'SetTallyLampCtrl':
+				jvcPTZObj.Request = {"Command":"SetTallyLampCtrl","SessionID":this.sessionID,"Params":{"Sw":opt.ctrl}}
+				break
 		}
 
 		if(this.isEmpty(jvcPTZObj)){

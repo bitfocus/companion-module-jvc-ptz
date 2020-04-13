@@ -190,5 +190,31 @@ exports.getActions = function() {
 		}]
 	}
 
+	actions['SetCamCtrl'] = {
+		label: 'Recoring control',
+		options: [
+			{
+				label: 'Select value',
+				type: 'dropdown',
+				id: 'ctrl',
+				default: 'Rec',
+				choices: [{ label: 'Record', id: 'Rec'},{ label: 'Stop recording', id: 'Stop'}]
+			}
+		]
+	}
+
+	actions['SetTallyLampCtrl'] = {
+		label: 'Tally lamp control',
+		options: [
+			{
+				label: 'Select value',
+				type: 'dropdown',
+				id: 'ctrl',
+				default: 'On',
+				choices: [{ label: 'On', id: 'On'},{ label: 'Off', id: 'Off'}]
+			}
+		]
+	}
+
 	return actions
 }
