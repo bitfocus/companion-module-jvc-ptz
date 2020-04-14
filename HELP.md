@@ -20,6 +20,8 @@ The following actions are available:
 * **White balance control:** Set to Auto WB, 3200K or 5600K options depens on camera model
 * **Iris:** Set open and close
 * **Exposure setting:** Manual, Auto, IrisPriority, ShutterPriority
+* **Recoring control:** Start or stop recording
+* **Tally light control:** Set tally light o fthe camera
 
 ## Variables available
 
@@ -27,3 +29,7 @@ To use the following, replace INSTANCENAME with the name of your module instance
 
 * **$(INSTANCENAME:model)**: Model of the camera (Standard would be $(JVC ptz:model), type that in a button text)
 * **$(INSTANCENAME:serial)**: Serial number of the camera (Standard would be $(JVC ptz:serial), type that in a button text)
+
+# Feedbacks
+
+For recoring and tally you can program feedback on a button. They will respond to status.

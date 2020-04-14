@@ -1,18 +1,25 @@
 let instance_skel = require('../../instance_skel');
 let actions       = require('./actions');
 let presets       = require('./presets');
+let feedbacks     = require('./feedbacks');
 let urllib        = require('urllib');
 let log;
 let debug;
-let sessionID = null;
 
 class instance extends instance_skel {
 
 	constructor(system,id,config) {
 		super(system,id,config)
 
-		Object.assign(this, {...actions,...presets})
+		Object.assign(this, {
+			...actions,
+			...presets,
+			...feedbacks
+		});
 
+		this.tally = -1;
+		this.record  = -1;
+		this.sessionID = null;
 		this.actions()
 	}
 
@@ -20,7 +27,7 @@ class instance extends instance_skel {
 		this.setActions(this.getActions());
 	}
 
-	init_connection() {
+	initConnection() {
 		if (this.config.host !== undefined && this.config.username !== undefined && this.config.password !== undefined) {
 			this.processAuthentication()
 		} else {
@@ -38,6 +45,7 @@ class instance extends instance_skel {
 			this.status(this.STATUS_OK);
 			let getSystemInfo = {}
 			this.sendCommand(getSystemInfo.Request = {"Command":"GetSystemInfo","SessionID":this.sessionID})
+			setTimeout(() => {this.getCamStatus()},500);
 			this.system.emit('log', 'JVC', 'info', 'sessionID: ' + this.sessionID)
 		}).catch(function (err) {
 			this.system.emit('error', 'Error: ' + err)
@@ -139,22 +147,34 @@ class instance extends instance_skel {
 				jvcPTZObj.Request = {"Command":"ZoomSwitchOperation","SessionID":this.sessionID,"Params":{"Direction":opt.direction,"Speed":opt.speed}}
 				break
 
-			case 'SetCamCtrl':
+			case 'setCamCtrl':
 				jvcPTZObj.Request = {"Command":"SetCamCtrl","SessionID":this.sessionID,"Params":{"CamCtrl":opt.ctrl}}
 				break
 
-			case 'SetTallyLampCtrl':
-				jvcPTZObj.Request = {"Command":"SetTallyLampCtrl","SessionID":this.sessionID,"Params":{"Sw":opt.ctrl}}
+			// case 'setTallyLampCtrl':
+			// 	jvcPTZObj.Request = {"Command":"SetTallyLampCtrl","SessionID":this.sessionID,"Params":{"Sw":opt.ctrl}}
+			// 	break
+			case 'setStudioTally':
+				jvcPTZObj.Request = {"Command":"SetStudioTally","SessionID":this.sessionID,"Params":{"Indication":opt.ctrl}}
+				this.Tally = opt.ctrl;
+				this.checkFeedbacks('tally_PGM');
+				this.checkFeedbacks('tally_PVW');
 				break
 		}
 
 		if(this.isEmpty(jvcPTZObj)){
 			this.system.emit('log','jvc', 'error','no command, array empty');
 		} else {
-			this.sendCommand(jvcPTZObj)
+			this.sendCommand(jvcPTZObj);
+			setTimeout(() => {this.getCamStatus()},500)
 		}
-
 	}
+
+	getCamStatus() {
+		let getCamStatus = {};
+		this.sendCommand(getCamStatus.Request = {"Command":"GetCamStatus","SessionID":this.sessionID});
+	}
+
 	sendCommand(jvcPTZObj) {
 		urllib.request(this.config.host + '/cgi-bin/api.cgi',{
 			method: 'POST',
@@ -172,11 +192,28 @@ class instance extends instance_skel {
 	}
 
 	processIncomingData(data) {
-		let resultObj = JSON.parse(data)
+		let resultObj = JSON.parse(data);
 		if(resultObj.Response['Requested'] === 'GetSystemInfo') {
 			this.setVariable('model', resultObj.Response.Data['Model'])
 			this.setVariable('serial', resultObj.Response.Data['Serial'])
 		}
+
+		if(resultObj.Response.Data.Camera['Status'] != 'Rec') {
+			this.recording = -1;
+		} else {
+			this.recording = 1;
+		}
+		this.checkFeedbacks('recording');
+
+		if(resultObj.Response.Data.TallyLamp['StudioTally'] == 'Program') {
+			this.tally = 'Program';
+		} else if(resultObj.Response.Data.TallyLamp['StudioTally'] == 'Preview') {
+			this.tally = 'Preview';
+		} else {
+			this.tally = 'Off';
+		}
+		this.checkFeedbacks('tally_PGM');
+		this.checkFeedbacks('tally_PVW');
 	}
 
 	isEmpty(obj) {
@@ -194,32 +231,41 @@ class instance extends instance_skel {
 	init() {
 		debug = this.debug;
 		log = this.log;
-		this.init_variables()
-		this.init_connection()
+		this.initVariables();
+		this.initFeedbacks();
+		this.checkFeedbacks('tally_PGM');
+		this.checkFeedbacks('tally_PVW');
+		this.checkFeedbacks('recording');
+		this.initConnection();
 		this.initPresets();
+
 	}
 
 	updateConfig(config) {
 
 		this.config = config
-		this.init_connection()
+		this.initConnection()
 		this.actions()
 
 	}
 
-	init_variables() {
-
+	initVariables() {
 		var variables = [
 			{ name: 'model', label: 'Camera model' },
 			{ name: 'serial', label: 'Camera serial' }
 		]
-
 		this.setVariableDefinitions(variables)
 
 	}
 
-	initPresets(updates) {
+	initFeedbacks() {
+		// feedbacks
+		var feedbacks = this.getFeedbacks();
 
+		this.setFeedbackDefinitions(feedbacks);
+	}
+
+	initPresets(updates) {
 		this.setPresetDefinitions(this.getPresets());
 	}
 

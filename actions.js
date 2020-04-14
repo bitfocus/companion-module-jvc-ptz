@@ -190,7 +190,7 @@ exports.getActions = function() {
 		}]
 	}
 
-	actions['SetCamCtrl'] = {
+	actions['setCamCtrl'] = {
 		label: 'Recoring control',
 		options: [
 			{
@@ -203,15 +203,15 @@ exports.getActions = function() {
 		]
 	}
 
-	actions['SetTallyLampCtrl'] = {
-		label: 'Tally lamp control',
+	actions['setStudioTally'] = {
+		label: 'StudioTally lamp control',
 		options: [
 			{
 				label: 'Select value',
 				type: 'dropdown',
 				id: 'ctrl',
-				default: 'On',
-				choices: [{ label: 'On', id: 'On'},{ label: 'Off', id: 'Off'}]
+				default: 'Program',
+				choices: [{ label: 'Program/PGM', id: 'Program'},{ label: 'Preview/PVW', id: 'Preview'},{ label: 'Off', id: 'Off'}]
 			}
 		]
 	}
