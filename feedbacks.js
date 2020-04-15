@@ -4,21 +4,21 @@ module.exports = {
 		var feedbacks = {};
 
 		feedbacks['recording'] = {
-			label: 'Change background color if the camera is recording',
+			label: 'Change background when recording',
 			description: 'When camera is recording, background color will change',
 			options: [
 				{
 					type: 'colorpicker',
 					label: 'Foreground color',
 					id: 'fg',
-					default: this.rgb(255,255,255)
+					default: this.rgb(255, 255, 255)
 
 				},
 				{
 					type: 'colorpicker',
 					label: 'Background color',
 					id: 'bg',
-					default: this.rgb(255,0,0)
+					default: this.rgb(255, 0, 0)
 				}
 			],
 			callback: (feedback, bank) => {
@@ -39,14 +39,14 @@ module.exports = {
 					type: 'colorpicker',
 					label: 'Foreground color',
 					id: 'fg',
-					default: this.rgb(255,255,255)
+					default: this.rgb(255, 255, 255)
 
 				},
 				{
 					type: 'colorpicker',
 					label: 'Background color',
 					id: 'bg',
-					default: this.rgb(255,0,0)
+					default: this.rgb(255, 0, 0)
 				}
 			],
 			callback: (feedback, bank) => {
@@ -67,14 +67,14 @@ module.exports = {
 					type: 'colorpicker',
 					label: 'Foreground color',
 					id: 'fg',
-					default: this.rgb(0,0,0)
+					default: this.rgb(0, 0, 0)
 
 				},
 				{
 					type: 'colorpicker',
 					label: 'Background color',
 					id: 'bg',
-					default: this.rgb(250,255,0)
+					default: this.rgb(250, 255, 0)
 				}
 			],
 			callback: (feedback, bank) => {

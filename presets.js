@@ -1,4 +1,4 @@
-exports.getPresets = function() {
+exports.getPresets = function () {
 	let presets = []
 
 	// Stealth Toggle
@@ -9,8 +9,8 @@ exports.getPresets = function() {
 			style: 'text',
 			text: 'Pan left, speed 15',
 			size: '14',
-			color: this.rgb(0,0,0),
-			bgcolor: this.rgb(235,235,235)
+			color: this.rgb(0, 0, 0),
+			bgcolor: this.rgb(235, 235, 235)
 		},
 		actions: [
 			{
@@ -39,8 +39,8 @@ exports.getPresets = function() {
 			style: 'text',
 			text: 'Pan right, speed 15',
 			size: '14',
-			color: this.rgb(0,0,0),
-			bgcolor: this.rgb(235,235,235)
+			color: this.rgb(0, 0, 0),
+			bgcolor: this.rgb(235, 235, 235)
 		},
 		actions: [
 			{
@@ -69,8 +69,8 @@ exports.getPresets = function() {
 			style: 'text',
 			text: 'Tilt up, speed 15',
 			size: '14',
-			color: this.rgb(0,0,0),
-			bgcolor: this.rgb(235,235,235)
+			color: this.rgb(0, 0, 0),
+			bgcolor: this.rgb(235, 235, 235)
 		},
 		actions: [
 			{
@@ -99,8 +99,8 @@ exports.getPresets = function() {
 			style: 'text',
 			text: 'Tilt down, speed 15',
 			size: '14',
-			color: this.rgb(0,0,0),
-			bgcolor: this.rgb(235,235,235)
+			color: this.rgb(0, 0, 0),
+			bgcolor: this.rgb(235, 235, 235)
 		},
 		actions: [
 			{
@@ -129,8 +129,8 @@ exports.getPresets = function() {
 			style: 'text',
 			text: 'Zoom Tele2',
 			size: '14',
-			color: this.rgb(0,0,0),
-			bgcolor: this.rgb(235,235,235)
+			color: this.rgb(0, 0, 0),
+			bgcolor: this.rgb(235, 235, 235)
 		},
 		actions: [
 			{
@@ -159,8 +159,8 @@ exports.getPresets = function() {
 			style: 'text',
 			text: 'Zoom Wide2',
 			size: '14',
-			color: this.rgb(0,0,0),
-			bgcolor: this.rgb(235,235,235)
+			color: this.rgb(0, 0, 0),
+			bgcolor: this.rgb(235, 235, 235)
 		},
 		actions: [
 			{
@@ -189,8 +189,8 @@ exports.getPresets = function() {
 			style: 'text',
 			text: 'Focus Near2',
 			size: '14',
-			color: this.rgb(0,0,0),
-			bgcolor: this.rgb(235,235,235)
+			color: this.rgb(0, 0, 0),
+			bgcolor: this.rgb(235, 235, 235)
 		},
 		actions: [
 			{
@@ -219,8 +219,8 @@ exports.getPresets = function() {
 			style: 'text',
 			text: 'Focus Far2',
 			size: '14',
-			color: this.rgb(0,0,0),
-			bgcolor: this.rgb(235,235,235)
+			color: this.rgb(0, 0, 0),
+			bgcolor: this.rgb(235, 235, 235)
 		},
 		actions: [
 			{
