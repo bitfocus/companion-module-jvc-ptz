@@ -21,7 +21,8 @@ The following actions are available:
 * **Iris:** Set open and close
 * **Exposure setting:** Manual, Auto, IrisPriority, ShutterPriority
 * **Recoring control:** Start or stop recording
-* **Tally light control:** Set tally light o fthe camera
+* **StudioTally lamp control:** Set tally light o fthe camera
+* **Switch Tally PGM if on Preview:** This action will check if the tally status is preview, when it is, it will switch to program. Use this when you use cut bottons on a swicther
 
 ## Variables available
 

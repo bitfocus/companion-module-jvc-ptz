@@ -215,6 +215,8 @@ exports.getActions = function () {
 			}
 		]
 	}
+	
+	actions['checkPVWtoPGM'] = { label: 'Switch Tally PGM if on Preview'	}
 
 	return actions
 }

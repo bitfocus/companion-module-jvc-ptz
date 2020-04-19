@@ -157,6 +157,14 @@ class instance extends instance_skel {
 				this.checkFeedbacks('tally_PGM');
 				this.checkFeedbacks('tally_PVW');
 				break
+
+				case 'checkPVWtoPGM':
+					if (this.tally == "Preview") {
+						jvcPTZObj.Request = { "Command": "SetStudioTally", "SessionID": this.sessionID, "Params": { "Indication": 'Program' } }
+					}
+					this.Tally = 'Program';
+					this.checkFeedbacks('tally_PGM');
+					break
 		}
 
 		if (this.isEmpty(jvcPTZObj)) {
