@@ -216,6 +216,19 @@ exports.getActions = function () {
 		]
 	}
 	
+	// special actions for tally
+
+	actions['setStudioPVWTally'] = {
+		label: 'StudioTally lamp control',
+	}
+	actions['setStudioPGMTally'] = {
+		label: 'StudioTally lamp control',
+	}
+
+	actions['setStudioOFFTally'] = {
+		label: 'StudioTally lamp control',
+	}
+	
 	actions['checkPVWtoPGM'] = { label: 'Switch Tally PGM if on Preview'	}
 
 	return actions

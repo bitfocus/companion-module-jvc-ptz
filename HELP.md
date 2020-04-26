@@ -34,3 +34,7 @@ To use the following, replace INSTANCENAME with the name of your module instance
 # Feedbacks
 
 For recoring and tally you can program feedback on a button. They will respond to status.
+
+## Checking for other variables
+
+In the instance config, you can set a variable and a value for that variable. When those match, the Studio tally Program will activate.
