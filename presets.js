@@ -4,6 +4,258 @@ exports.getPresets = function () {
 	// Stealth Toggle
 	presets.push({
 		category: 'Pan/Tilt',
+		label: 'UP',
+		bank: {
+			style: 'png',
+			text: '',
+			png64: this.ICON_UP,
+			pngalignment: 'center:center',
+			size: '18',
+			color: '16777215',
+			bgcolor: this.rgb(0, 0, 0)
+		},
+		actions: [
+			{
+				action: 'joyStickOperationPT',
+				options: {
+					direction: 'Up',
+					speed: '15'
+				}
+			}
+		],
+		release_actions: [
+			{
+				action: 'joyStickOperationPT',
+				options: {
+					direction: 'Stop',
+					speed: '0'
+				}
+			}
+		]
+	});
+	presets.push({
+		category: 'Pan/Tilt',
+		label: 'DOWN',
+		bank: {
+			style: 'png',
+			text: '',
+			png64: this.ICON_DOWN,
+			pngalignment: 'center:center',
+			size: '18',
+			color: '16777215',
+			bgcolor: this.rgb(0, 0, 0)
+		},
+		actions: [
+			{
+				action: 'joyStickOperationPT',
+				options: {
+					direction: 'Down',
+					speed: '15'
+				}
+			}
+		],
+		release_actions: [
+			{
+				action: 'joyStickOperationPT',
+				options: {
+					direction: 'Stop',
+					speed: '0'
+				}
+			}
+		]
+	});
+	presets.push({
+		category: 'Pan/Tilt',
+		label: 'RIGHT',
+		bank: {
+			style: 'png',
+			text: '',
+			png64: this.ICON_RIGHT,
+			pngalignment: 'center:center',
+			size: '18',
+			color: '16777215',
+			bgcolor: this.rgb(0, 0, 0)
+		},
+		actions: [
+			{
+				action: 'joyStickOperationPT',
+				options: {
+					direction: 'Right',
+					speed: '15'
+				}
+			}
+		],
+		release_actions: [
+			{
+				action: 'joyStickOperationPT',
+				options: {
+					direction: 'Stop',
+					speed: '0'
+				}
+			}
+		]
+	});
+	presets.push({
+		category: 'Pan/Tilt',
+		label: 'LEFT',
+		bank: {
+			style: 'png',
+			text: '',
+			png64: this.ICON_LEFT,
+			pngalignment: 'center:center',
+			size: '18',
+			color: '16777215',
+			bgcolor: this.rgb(0, 0, 0)
+		},
+		actions: [
+			{
+				action: 'joyStickOperationPT',
+				options: {
+					direction: 'Left',
+					speed: '15'
+				}
+			}
+		],
+		release_actions: [
+			{
+				action: 'joyStickOperationPT',
+				options: {
+					direction: 'Stop',
+					speed: '0'
+				}
+			}
+		]
+	});
+	presets.push({
+		category: 'Pan/Tilt',
+		label: 'RIGHTUP',
+		bank: {
+			style: 'png',
+			text: '',
+			png64: this.ICON_UP_RIGHT,
+			pngalignment: 'center:center',
+			size: '18',
+			color: '16777215',
+			bgcolor: this.rgb(0, 0, 0)
+		},
+		actions: [
+			{
+				action: 'joyStickOperationPT',
+				options: {
+					direction: 'RightUp',
+					speed: '15'
+				}
+			}
+		],
+		release_actions: [
+			{
+				action: 'joyStickOperationPT',
+				options: {
+					direction: 'Stop',
+					speed: '0'
+				}
+			}
+		]
+	});
+	presets.push({
+		category: 'Pan/Tilt',
+		label: 'RIGHTDOWN',
+		bank: {
+			style: 'png',
+			text: '',
+			png64: this.ICON_DOWN_RIGHT,
+			pngalignment: 'center:center',
+			size: '18',
+			color: '16777215',
+			bgcolor: this.rgb(0, 0, 0)
+		},
+		actions: [
+			{
+				action: 'joyStickOperationPT',
+				options: {
+					direction: 'RightDown',
+					speed: '15'
+				}
+			}
+		],
+		release_actions: [
+			{
+				action: 'joyStickOperationPT',
+				options: {
+					direction: 'Stop',
+					speed: '0'
+				}
+			}
+		]
+	});
+	presets.push({
+		category: 'Pan/Tilt',
+		label: 'LEFTUP',
+		bank: {
+			style: 'png',
+			text: '',
+			png64: this.ICON_UP_LEFT,
+			pngalignment: 'center:center',
+			size: '18',
+			color: '16777215',
+			bgcolor: this.rgb(0, 0, 0)
+		},
+		actions: [
+			{
+				action: 'joyStickOperationPT',
+				options: {
+					direction: 'LeftUp',
+					speed: '15'
+				}
+			}
+		],
+		release_actions: [
+			{
+				action: 'joyStickOperationPT',
+				options: {
+					direction: 'Stop',
+					speed: '0'
+				}
+			}
+		]
+	});
+	presets.push({
+		category: 'Pan/Tilt',
+		label: 'LEFTDOWN',
+		bank: {
+			style: 'png',
+			text: '',
+			png64: this.ICON_DOWN_LEFT,
+			pngalignment: 'center:center',
+			size: '18',
+			color: '16777215',
+			bgcolor: this.rgb(0, 0, 0)
+		},
+		actions: [
+			{
+				action: 'joyStickOperationPT',
+				options: {
+					direction: 'LeftDown',
+					speed: '15'
+				}
+			}
+		],
+		release_actions: [
+			{
+				action: 'joyStickOperationPT',
+				options: {
+					direction: 'Stop',
+					speed: '0'
+				}
+			}
+		]
+	});
+
+
+
+
+	presets.push({
+		category: 'Pan/Tilt',
 		label: 'Pan left',
 		bank: {
 			style: 'text',
