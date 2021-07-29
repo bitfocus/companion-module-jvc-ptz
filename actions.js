@@ -202,6 +202,18 @@ exports.getActions = function () {
 			}
 		]
 	}
+	actions['SetStreamingCtrl'] = {
+		label: 'Streaming control',
+		options: [
+			{
+				label: 'Select value',
+				type: 'dropdown',
+				id: 'ctrl',
+				default: 'On',
+				choices: [{ label: 'Start Streaming', id: 'On' }, { label: 'Stop streaming', id: 'Off' }]
+			}
+		]
+	}
 
 	actions['setStudioTally'] = {
 		label: 'StudioTally lamp control',
