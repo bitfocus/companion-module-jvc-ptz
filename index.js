@@ -19,6 +19,7 @@ class instance extends instance_skel {
 
 		this.tally = 'Off';
 		this.record = -1;
+		this.streaming = -1;
 		this.sessionID = null;
 		this.actions()
 	}
@@ -219,7 +220,11 @@ class instance extends instance_skel {
 			case 'setCamCtrl':
 				jvcPTZObj.Request = { "Command": "SetCamCtrl", "SessionID": this.sessionID, "Params": { "CamCtrl": opt.ctrl } }
 				break
-
+				
+			case 'SetStreamingCtrl':
+				jvcPTZObj.Request = { "Command": "SetStreamingCtrl", "SessionID": this.sessionID, "Params": { "SetStreamingCtrl": opt.ctrl } }
+				break
+				
 			case 'setStudioTally':
 				jvcPTZObj.Request = { "Command": "SetStudioTally", "SessionID": this.sessionID, "Params": { "Indication": opt.ctrl } }
 				this.Tally = opt.ctrl;
