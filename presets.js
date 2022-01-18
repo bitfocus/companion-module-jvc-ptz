@@ -16,7 +16,7 @@ exports.getPresets = function () {
 		},
 		actions: [
 			{
-				action: 'joyStickOperationPT',
+				action: 'joyStickOperationPan',
 				options: {
 					direction: 'Up',
 					speed: '15'
@@ -25,7 +25,7 @@ exports.getPresets = function () {
 		],
 		release_actions: [
 			{
-				action: 'joyStickOperationPT',
+				action: 'joyStickOperationPan',
 				options: {
 					direction: 'Stop',
 					speed: '0'
@@ -47,7 +47,7 @@ exports.getPresets = function () {
 		},
 		actions: [
 			{
-				action: 'joyStickOperationPT',
+				action: 'joyStickOperationPan',
 				options: {
 					direction: 'Down',
 					speed: '15'
@@ -56,7 +56,7 @@ exports.getPresets = function () {
 		],
 		release_actions: [
 			{
-				action: 'joyStickOperationPT',
+				action: 'joyStickOperationPan',
 				options: {
 					direction: 'Stop',
 					speed: '0'
@@ -78,7 +78,7 @@ exports.getPresets = function () {
 		},
 		actions: [
 			{
-				action: 'joyStickOperationPT',
+				action: 'joyStickOperationPan',
 				options: {
 					direction: 'Right',
 					speed: '15'
@@ -87,7 +87,7 @@ exports.getPresets = function () {
 		],
 		release_actions: [
 			{
-				action: 'joyStickOperationPT',
+				action: 'joyStickOperationPan',
 				options: {
 					direction: 'Stop',
 					speed: '0'
@@ -109,7 +109,7 @@ exports.getPresets = function () {
 		},
 		actions: [
 			{
-				action: 'joyStickOperationPT',
+				action: 'joyStickOperationPan',
 				options: {
 					direction: 'Left',
 					speed: '15'
@@ -118,7 +118,7 @@ exports.getPresets = function () {
 		],
 		release_actions: [
 			{
-				action: 'joyStickOperationPT',
+				action: 'joyStickOperationPan',
 				options: {
 					direction: 'Stop',
 					speed: '0'
@@ -140,7 +140,7 @@ exports.getPresets = function () {
 		},
 		actions: [
 			{
-				action: 'joyStickOperationPT',
+				action: 'joyStickOperationPan',
 				options: {
 					direction: 'RightUp',
 					speed: '15'
@@ -149,7 +149,7 @@ exports.getPresets = function () {
 		],
 		release_actions: [
 			{
-				action: 'joyStickOperationPT',
+				action: 'joyStickOperationPan',
 				options: {
 					direction: 'Stop',
 					speed: '0'
@@ -171,7 +171,7 @@ exports.getPresets = function () {
 		},
 		actions: [
 			{
-				action: 'joyStickOperationPT',
+				action: 'joyStickOperationPan',
 				options: {
 					direction: 'RightDown',
 					speed: '15'
@@ -180,7 +180,7 @@ exports.getPresets = function () {
 		],
 		release_actions: [
 			{
-				action: 'joyStickOperationPT',
+				action: 'joyStickOperationPan',
 				options: {
 					direction: 'Stop',
 					speed: '0'
@@ -202,7 +202,7 @@ exports.getPresets = function () {
 		},
 		actions: [
 			{
-				action: 'joyStickOperationPT',
+				action: 'joyStickOperationPan',
 				options: {
 					direction: 'LeftUp',
 					speed: '15'
@@ -211,7 +211,7 @@ exports.getPresets = function () {
 		],
 		release_actions: [
 			{
-				action: 'joyStickOperationPT',
+				action: 'joyStickOperationPan',
 				options: {
 					direction: 'Stop',
 					speed: '0'
@@ -233,7 +233,7 @@ exports.getPresets = function () {
 		},
 		actions: [
 			{
-				action: 'joyStickOperationPT',
+				action: 'joyStickOperationPan',
 				options: {
 					direction: 'LeftDown',
 					speed: '15'
@@ -242,7 +242,7 @@ exports.getPresets = function () {
 		],
 		release_actions: [
 			{
-				action: 'joyStickOperationPT',
+				action: 'joyStickOperationPan',
 				options: {
 					direction: 'Stop',
 					speed: '0'
@@ -316,7 +316,7 @@ exports.getPresets = function () {
 
 	presets.push({
 		category: 'Pan/Tilt',
-		label: 'Tit up',
+		label: 'Tilt up',
 		bank: {
 			style: 'text',
 			text: 'Tilt up, speed 15',
@@ -346,7 +346,7 @@ exports.getPresets = function () {
 
 	presets.push({
 		category: 'Pan/Tilt',
-		label: 'Tit Down',
+		label: 'Tilt Down',
 		bank: {
 			style: 'text',
 			text: 'Tilt down, speed 15',
