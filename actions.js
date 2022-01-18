@@ -10,7 +10,7 @@ exports.getActions = function () {
 				type: 'dropdown',
 				id: 'direction',
 				default: 'Stop',
-				choices: [{ label: 'Left', id: 'Left' }, { label: 'Right', id: 'Right' }, { label: 'Stop', id: 'Stop' }]
+				choices: [{ label: 'Left', id: 'Left' }, { label: 'Right', id: 'Right' }, { label: 'RightUp', id: 'RightUp' } , { label: 'RightDown', id: 'RightDown' }, { label: 'LeftUp', id: 'LeftUp' }, { label: 'LeftDown', id: 'LeftDown' }, { label: 'Up', id: 'Up' } , { label: 'Down', id: 'Down' }, { label: 'Stop', id: 'Stop' }]
 			},
 			{
 				label: 'Select speed (0-100)',
@@ -199,6 +199,18 @@ exports.getActions = function () {
 				id: 'ctrl',
 				default: 'Rec',
 				choices: [{ label: 'Record', id: 'Rec' }, { label: 'Stop recording', id: 'Stop' }]
+			}
+		]
+	}
+	actions['setCamCtrl'] = {
+		label: 'Streaming control',
+		options: [
+			{
+				label: 'Select value',
+				type: 'dropdown',
+				id: 'ctrl',
+				default: 'Stream',
+				choices: [{ label: 'Start Stream', id: 'Stream' }, { label: 'Stop Stream', id: 'Stop' }]
 			}
 		]
 	}
