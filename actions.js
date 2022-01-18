@@ -2,7 +2,7 @@ exports.getActions = function () {
 
 	let actions = {}
 
-	actions['joyStickOperationPT'] = {
+	actions['joyStickOperationPan'] = {
 		label: 'Pan camera',
 		options: [
 			{
