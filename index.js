@@ -49,14 +49,12 @@ class instance extends instance_skel {
 		});
 	}
 
-	tallyOnListener(label, variable, value) {
+	tallyOnListener(changed_variables, label, variable, value) {
 		const { tallyOnEnabled, tallyOnVariable, tallyOnValue } = this.config;
 	
-		if (!tallyOnEnabled || `${label}:${variable}` !== tallyOnVariable) {
-			return;
-		}
+		if (tallyOnEnabled && changed_variables && tallyOnVariable in changed_variables) {
 	
-		this.parseVariables(tallyOnValue, (parsedValue) => {
+		this.parseVariables(`$(${tallyOnValue})`, (parsedValue) => {
 			this.debug('variable changed... updating tally', { label, variable, value, parsedValue });
 			this.action({
 				action: (value === parsedValue ? 'setStudioPGMTally' : 'tallysetStudioOFFTally'),
@@ -64,15 +62,16 @@ class instance extends instance_skel {
 			});
 		});
 	}
+	}
 
 	setupEventListeners() {
 		if (this.config.tallyOnEnabled && this.config.tallyOnVariable) {
 			if (!this.activeTallyOnListener) {
 				this.activeTallyOnListener = this.tallyOnListener.bind(this);
-				this.system.on('variable_changed', this.activeTallyOnListener);
+				this.system.on('variables_changed', this.activeTallyOnListener);
 			}
 		} else if (this.activeTallyOnListener) {
-			this.system.removeListener('variable_changed', this.activeTallyOnListener);
+			this.system.removeListener('variables_changed', this.activeTallyOnListener);
 			delete this.activeTallyOnListener;
 		}
 	}
@@ -312,7 +311,7 @@ class instance extends instance_skel {
 
 	destroy() {
 		if (this.activeTallyOnListener) {
-			this.system.removeListener('variable_changed', this.activeTallyOnListener);
+			this.system.removeListener('variables_changed', this.activeTallyOnListener);
 			delete this.activeTallyOnListener;
 		}
 		this.debug("destroy", this.id);
