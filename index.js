@@ -49,19 +49,20 @@ class instance extends instance_skel {
 		});
 	}
 
-	tallyOnListener(changed_variables, label, variable, value) {
+	tallyOnListener(changed_variables) {
 		const { tallyOnEnabled, tallyOnVariable, tallyOnValue } = this.config;
 	
 		if (tallyOnEnabled && changed_variables && tallyOnVariable in changed_variables) {
+			const value = changed_variables[tallyOnVariable]
 	
-		this.parseVariables(`$(${tallyOnValue})`, (parsedValue) => {
-			this.debug('variable changed... updating tally', { label, variable, value, parsedValue });
-			this.action({
-				action: (value === parsedValue ? 'setStudioPGMTally' : 'tallysetStudioOFFTally'),
-				instance: this.id
+			this.parseVariables(`$(${tallyOnValue})`, (parsedValue) => {
+				this.debug('variable changed... updating tally', { tallyOnVariable, value, parsedValue });
+				this.action({
+					action: (value === parsedValue ? 'setStudioPGMTally' : 'tallysetStudioOFFTally'),
+					instance: this.id
+				});
 			});
-		});
-	}
+		}
 	}
 
 	setupEventListeners() {
