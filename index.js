@@ -3,7 +3,6 @@ let actions       = require('./actions');
 let presets       = require('./presets');
 let feedbacks     = require('./feedbacks');
 let urllib        = require('urllib');
-let log;
 
 class instance extends instance_skel {
 
@@ -29,7 +28,7 @@ class instance extends instance_skel {
 		if (this.config.host !== undefined && this.config.username !== undefined && this.config.password !== undefined) {
 			this.processAuthentication()
 		} else {
-			this.system.emit('log', 'jvc', 'error', 'Apply instance settings')
+			this.log('error', 'Apply instance settings')
 		}
 	}
 
@@ -44,9 +43,9 @@ class instance extends instance_skel {
 			let getSystemInfo = {}
 			this.sendCommand(getSystemInfo.Request = { "Command": "GetSystemInfo", "SessionID": this.sessionID })
 			setTimeout(() => { this.getCamStatus() }, 500);
-			this.system.emit('log', 'JVC', 'info', 'sessionID: ' + this.sessionID)
+			this.log('info', 'sessionID: ' + this.sessionID)
 		}).catch( (err) => {
-			this.system.emit('error', 'Error: ' + err)
+			this.log('error', 'Error: ' + err)
 		});
 	}
 
@@ -57,9 +56,9 @@ class instance extends instance_skel {
 			return;
 		}
 	
-		this.system.emit('variable_parse', tallyOnValue, (parsedValue) => {
+		this.parseVariables(tallyOnValue, (parsedValue) => {
 			this.debug('variable changed... updating tally', { label, variable, value, parsedValue });
-			this.system.emit('action_run', {
+			this.action({
 				action: (value === parsedValue ? 'setStudioPGMTally' : 'tallysetStudioOFFTally'),
 				instance: this.id
 			});
@@ -252,7 +251,7 @@ class instance extends instance_skel {
 		}
 
 		if (this.isEmpty(jvcPTZObj)) {
-			this.system.emit('log', 'jvc', 'error', 'no command, array empty');
+			this.log('error', 'no command, array empty');
 		} else {
 			this.sendCommand(jvcPTZObj);
 			setTimeout(() => { this.getCamStatus() }, 500)
@@ -275,7 +274,7 @@ class instance extends instance_skel {
 			let resObj = result.res.data
 			this.processIncomingData(resObj)
 		}).catch( (err) =>{
-			log('log', 'jvc', 'error', 'Error: ' + err);
+			this.log('error', 'Error: ' + err);
 		});
 	}
 
@@ -320,7 +319,6 @@ class instance extends instance_skel {
 	}
 
 	init() {
-		log = this.log;
 		this.initVariables();
 		this.initActions()
 		this.initFeedbacks();
