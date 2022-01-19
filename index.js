@@ -4,7 +4,6 @@ let presets       = require('./presets');
 let feedbacks     = require('./feedbacks');
 let urllib        = require('urllib');
 let log;
-let debug;
 
 class instance extends instance_skel {
 
@@ -20,10 +19,9 @@ class instance extends instance_skel {
 		this.tally = 'Off';
 		this.record = -1;
 		this.sessionID = null;
-		this.actions()
 	}
 
-	actions(system) {
+	initActions() {
 		this.setActions(this.getActions());
 	}
 
@@ -47,7 +45,7 @@ class instance extends instance_skel {
 			this.sendCommand(getSystemInfo.Request = { "Command": "GetSystemInfo", "SessionID": this.sessionID })
 			setTimeout(() => { this.getCamStatus() }, 500);
 			this.system.emit('log', 'JVC', 'info', 'sessionID: ' + this.sessionID)
-		}).catch(function (err) {
+		}).catch( (err) => {
 			this.system.emit('error', 'Error: ' + err)
 		});
 	}
@@ -60,7 +58,7 @@ class instance extends instance_skel {
 		}
 	
 		this.system.emit('variable_parse', tallyOnValue, (parsedValue) => {
-			debug('variable changed... updating tally', { label, variable, value, parsedValue });
+			this.debug('variable changed... updating tally', { label, variable, value, parsedValue });
 			this.system.emit('action_run', {
 				action: (value === parsedValue ? 'setStudioPGMTally' : 'tallysetStudioOFFTally'),
 				instance: this.id
@@ -223,8 +221,7 @@ class instance extends instance_skel {
 			case 'setStudioTally':
 				jvcPTZObj.Request = { "Command": "SetStudioTally", "SessionID": this.sessionID, "Params": { "Indication": opt.ctrl } }
 				this.Tally = opt.ctrl;
-				this.checkFeedbacks('tally_PGM');
-				this.checkFeedbacks('tally_PVW');
+				this.checkFeedbacks('tally_PGM', 'tally_PVW');
 				break
 
 			case 'checkPVWtoPGM':
@@ -277,7 +274,7 @@ class instance extends instance_skel {
 		}).then((result) => {
 			let resObj = result.res.data
 			this.processIncomingData(resObj)
-		}).catch(function (err) {
+		}).catch( (err) =>{
 			log('log', 'jvc', 'error', 'Error: ' + err);
 		});
 	}
@@ -303,8 +300,7 @@ class instance extends instance_skel {
 		} else {
 			this.tally = 'Off';
 		}
-		this.checkFeedbacks('tally_PGM');
-		this.checkFeedbacks('tally_PVW');
+		this.checkFeedbacks('tally_PGM', 'tally_PVW');
 	}
 
 	isEmpty(obj) {
@@ -320,17 +316,15 @@ class instance extends instance_skel {
 			this.system.removeListener('variable_changed', this.activeTallyOnListener);
 			delete this.activeTallyOnListener;
 		}
-		debug("destroy", this.id);
+		this.debug("destroy", this.id);
 	}
 
 	init() {
-		debug = this.debug;
 		log = this.log;
 		this.initVariables();
+		this.initActions()
 		this.initFeedbacks();
-		this.checkFeedbacks('tally_PGM');
-		this.checkFeedbacks('tally_PVW');
-		this.checkFeedbacks('recording');
+		this.checkFeedbacks('tally_PGM', 'tally_PVW', 'recording');
 		this.initConnection();
 		this.initPresets();
 		this.setupEventListeners();
@@ -339,7 +333,6 @@ class instance extends instance_skel {
 	updateConfig(config) {
 		this.config = config
 		this.initConnection()
-		this.actions()
 		this.setupEventListeners();
 	}
 
@@ -352,11 +345,10 @@ class instance extends instance_skel {
 	}
 
 	initFeedbacks() {
-		var feedbacks = this.getFeedbacks();
-		this.setFeedbackDefinitions(feedbacks);
+		this.setFeedbackDefinitions(this.getFeedbacks());
 	}
 
-	initPresets(updates) {
+	initPresets() {
 		this.setPresetDefinitions(this.getPresets());
 	}
 

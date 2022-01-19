@@ -17,7 +17,6 @@
 	"author": "Jeffrey Davidsz <jeffrey.davidsz@vicreo.eu>",
 	"license": "MIT",
 	"dependencies": {
-		"bluebird": "^3.7.2",
 		"urllib": "^2.34.2"
 	}
 }
