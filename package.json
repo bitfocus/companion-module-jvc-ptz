@@ -17,7 +17,7 @@
 	"author": "Jeffrey Davidsz <jeffrey.davidsz@vicreo.eu>",
 	"license": "MIT",
 	"dependencies": {
-		"urllib": "^2.34.2"
+		"urllib": "^2.38.0"
 	},
 	"homepage": "https://github.com/bitfocus/companion-module-jvc-ptz#readme",
 	"bugs": {
