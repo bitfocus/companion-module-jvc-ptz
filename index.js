@@ -275,6 +275,16 @@ class instance extends instance_skel {
 				}
 				break
 
+			case 'SetWebSliderEvent':
+				jvcPTZObj = {
+					Request: {
+						Command: 'SetWebSliderEvent',
+						SessionID: this.sessionID,
+						Params: { Kind: opt.kind, Position: parseInt(opt.position) },
+					},
+				}
+				break
+
 			case 'zoomSwitchOperation':
 				jvcPTZObj = {
 					Request: {

@@ -159,6 +159,26 @@ exports.getActions = () => {
 			}
 		]
 	}
+
+	actions['SetWebSliderEvent'] = {
+		label: 'Web Slider Event',
+		options: [
+			{
+				label: 'Kind',
+				type: 'dropdown',
+				id: 'kind',
+				default: 'PresetSpeedBar',
+				choices: [{ label: 'PresetSpeedBar', id: 'PresetSpeedBar' }, { label: 'ZoomBar', id: 'ZoomBar' }, { label: 'IrisBar', id: 'IrisBar' }]
+			},
+			{
+				label: 'Position',
+				type: 'textinput',
+				id: 'position',
+				default: '1',
+				regex: this.REGEX_NUMBER
+			},
+		]
+	}
 	/***Extra options***/
 
 	actions['setZoomCtrl'] = {
