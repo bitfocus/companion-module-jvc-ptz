@@ -16,7 +16,7 @@ exports.getPresets = function () {
 		},
 		actions: [
 			{
-				action: 'joyStickOperationPan',
+				action: 'joyStickOperationTilt',
 				options: {
 					direction: 'Up',
 					speed: '15'
@@ -25,7 +25,7 @@ exports.getPresets = function () {
 		],
 		release_actions: [
 			{
-				action: 'joyStickOperationPan',
+				action: 'joyStickOperationTilt',
 				options: {
 					direction: 'Stop',
 					speed: '0'
@@ -47,7 +47,7 @@ exports.getPresets = function () {
 		},
 		actions: [
 			{
-				action: 'joyStickOperationPan',
+				action: 'joyStickOperationTilt',
 				options: {
 					direction: 'Down',
 					speed: '15'
@@ -56,7 +56,7 @@ exports.getPresets = function () {
 		],
 		release_actions: [
 			{
-				action: 'joyStickOperationPan',
+				action: 'joyStickOperationTilt',
 				options: {
 					direction: 'Stop',
 					speed: '0'

@@ -1,4 +1,4 @@
-exports.getActions = function () {
+exports.getActions = () => {
 
 	let actions = {}
 
@@ -10,14 +10,14 @@ exports.getActions = function () {
 				type: 'dropdown',
 				id: 'direction',
 				default: 'Stop',
-				choices: [{ label: 'Left', id: 'Left' }, { label: 'Right', id: 'Right' }, { label: 'RightUp', id: 'RightUp' } , { label: 'RightDown', id: 'RightDown' }, { label: 'LeftUp', id: 'LeftUp' }, { label: 'LeftDown', id: 'LeftDown' }, { label: 'Up', id: 'Up' } , { label: 'Down', id: 'Down' }, { label: 'Stop', id: 'Stop' }]
+				choices: [{ label: 'Left', id: 'Left' }, { label: 'Right', id: 'Right' }, { label: 'RightUp', id: 'RightUp' } , { label: 'RightDown', id: 'RightDown' }, { label: 'LeftUp', id: 'LeftUp' }, { label: 'LeftDown', id: 'LeftDown' }, { label: 'Stop', id: 'Stop' }]
 			},
 			{
 				label: 'Select speed (0-100)',
 				type: 'textinput',
 				id: 'speed',
 				default: '15',
-				regex: '/^([0-9]|[1-2][0-9]|100)$/'
+				regex: this.REGEX_NUMBER
 			}
 		]
 	}
@@ -95,7 +95,7 @@ exports.getActions = function () {
 				label: 'Select value',
 				type: 'dropdown',
 				id: 'button',
-				default: 'M',
+				default: '+1',
 				choices: [{ label: '+1', id: 'Up1' }, { label: '-1', id: 'Down1' }]
 			}
 		]
