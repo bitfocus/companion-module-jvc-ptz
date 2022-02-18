@@ -222,7 +222,7 @@ exports.getActions = () => {
 			}
 		]
 	}
-	actions['setCamCtrl'] = {
+	actions['setStreamingCtrl'] = {
 		label: 'Streaming control',
 		options: [
 			{
@@ -230,7 +230,7 @@ exports.getActions = () => {
 				type: 'dropdown',
 				id: 'ctrl',
 				default: 'Stream',
-				choices: [{ label: 'Start Stream', id: 'Stream' }, { label: 'Stop Stream', id: 'Stop' }]
+				choices: [{ label: 'Start Stream', id: 'On' }, { label: 'Stop Stream', id: 'Off' }]
 			}
 		]
 	}
