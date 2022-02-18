@@ -16,7 +16,10 @@ class instance extends instance_skel {
 
 		this.tally = 'Off'
 		this.record = -1
+		this.stream = -1
 		this.sessionID = null
+		this.tilt = "Stop"
+		this.direction = ""
 	}
 
 	initActions() {
@@ -45,7 +48,7 @@ class instance extends instance_skel {
 				setTimeout(() => {
 					this.getCamStatus()
 				}, 500)
-				this.log('info', 'sessionID: ' + this.sessionID)
+				//this.log('info', 'sessionID: ' + this.sessionID)
 			})
 			.catch((err) => {
 				this.log('error', 'Error: ' + err)
@@ -246,11 +249,30 @@ class instance extends instance_skel {
 				break
 
 			case 'joyStickOperationPan':
+				this.tilt = "Stop"
+				switch (opt.direction) {
+				case "RightUp":
+					this.tilt = "Up"
+					this.direction = "Right"
+					break
+				case "RightDown":
+					this.tilt = "Down"
+					this.direction = "Right"
+					break
+				case "LeftUp":
+					this.tilt = "Up"
+					this.direction = "Left"
+					break
+				case "LeftDown":
+					this.tilt = "Down"
+					this.direction = "Left"
+					break
+				}
 				jvcPTZObj = {
 					Request: {
 						Command: 'JoyStickOperation',
 						SessionID: this.sessionID,
-						Params: { PanDirection: opt.direction, PanSpeed: parseInt(opt.speed), TiltDirection: 'Stop', TiltSpeed: 0 },
+						Params: { PanDirection: this.direction, PanSpeed: parseInt(opt.speed), TiltDirection: this.tilt, TiltSpeed: parseInt(opt.speed) },
 					},
 				}
 				break
@@ -297,6 +319,10 @@ class instance extends instance_skel {
 
 			case 'setCamCtrl':
 				jvcPTZObj = { Request: { Command: 'SetCamCtrl', SessionID: this.sessionID, Params: { CamCtrl: opt.ctrl } } }
+				break
+
+			case 'setStreamingCtrl':
+				jvcPTZObj = { Request: { Command: 'SetStreamingCtrl', SessionID: this.sessionID, Params: { Streaming: opt.ctrl } } }
 				break
 
 			case 'setStudioTally':
@@ -355,7 +381,7 @@ class instance extends instance_skel {
 	}
 
 	sendCommand(jvcPTZObj) {
-		console.log(JSON.stringify(jvcPTZObj))
+		//console.log(JSON.stringify(jvcPTZObj))
 		urllib
 			.request(this.config.host + '/cgi-bin/api.cgi', {
 				method: 'POST',
@@ -366,6 +392,7 @@ class instance extends instance_skel {
 			})
 			.then((result) => {
 				let resObj = result.res.data
+				//this.log(resObj)
 				this.processIncomingData(resObj)
 			})
 			.catch((err) => {
@@ -387,6 +414,13 @@ class instance extends instance_skel {
 			this.recording = 1
 		}
 		this.checkFeedbacks('recording')
+
+		if (resultObj.Response.Data.Streaming['Status'] != 'Start') {
+			this.streaming = -1
+		} else {
+			this.streaming = 1
+		}
+		this.checkFeedbacks('streaming')
 
 		if (resultObj.Response.Data.TallyLamp['StudioTally'] == 'Program') {
 			this.tally = 'Program'
