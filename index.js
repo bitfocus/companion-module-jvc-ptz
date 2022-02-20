@@ -250,6 +250,7 @@ class instance extends instance_skel {
 
 			case 'joyStickOperationPan':
 				this.tilt = "Stop"
+				this.direction = opt.direction
 				switch (opt.direction) {
 				case "RightUp":
 					this.tilt = "Up"
