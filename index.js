@@ -55,46 +55,7 @@ class instance extends instance_skel {
 			})
 	}
 
-	tallyOnListener(changed_variables) {
-		const { tallyOnEnabled, tallyOnVariable, tallyOnValue } = this.config
-
-		if (tallyOnEnabled && changed_variables && tallyOnVariable in changed_variables) {
-			const value = changed_variables[tallyOnVariable]
-
-			this.parseVariables(`$(${tallyOnValue})`, (parsedValue) => {
-				this.debug('variable changed... updating tally', { tallyOnVariable, value, parsedValue })
-				this.action({
-					action: value === parsedValue ? 'setStudioPGMTally' : 'tallysetStudioOFFTally',
-					instance: this.id,
-				})
-			})
-		}
-	}
-
-	setupEventListeners() {
-		if (this.config.tallyOnEnabled && this.config.tallyOnVariable) {
-			if (!this.activeTallyOnListener) {
-				this.activeTallyOnListener = this.tallyOnListener.bind(this)
-				this.system.on('variables_changed', this.activeTallyOnListener)
-			}
-		} else if (this.activeTallyOnListener) {
-			this.system.removeListener('variables_changed', this.activeTallyOnListener)
-			delete this.activeTallyOnListener
-		}
-	}
-
 	config_fields() {
-		const dynamicVariableChoices = []
-		this.system.emit('variable_get_definitions', (definitions) =>
-			Object.entries(definitions).forEach(([instanceLabel, variables]) =>
-				variables.forEach((variable) =>
-					dynamicVariableChoices.push({
-						id: `${instanceLabel}:${variable.name}`,
-						label: `${instanceLabel}:${variable.name}`,
-					})
-				)
-			)
-		)
 		return [
 			{
 				type: 'text',
@@ -129,31 +90,7 @@ class instance extends instance_skel {
 				id: 'tallyOnInfo',
 				width: 12,
 				label: 'Tally On',
-				value: 'Set camera tally ON when the instance variable equals the value',
-			},
-			{
-				type: 'checkbox',
-				id: 'tallyOnEnabled',
-				width: 1,
-				label: 'Enable',
-				default: false,
-			},
-			{
-				type: 'dropdown',
-				id: 'tallyOnVariable',
-				label: 'Tally On Variable',
-				width: 6,
-				tooltip: 'The instance label and variable name',
-				choices: dynamicVariableChoices,
-				minChoicesForSearch: 5,
-			},
-			{
-				type: 'textinput',
-				id: 'tallyOnValue',
-				label: 'Tally On Value',
-				width: 5,
-				tooltip:
-					'When the variable equals this value, the camera tally light will be turned on.  Also supports dynamic variable references.  For example, $(atem:short_1)',
+				value: 	'Support for Tally On is no longer possible. Instead you can set this up as a trigger, and get additional control',
 			},
 		]
 	}
@@ -441,10 +378,6 @@ class instance extends instance_skel {
 	}
 
 	destroy() {
-		if (this.activeTallyOnListener) {
-			this.system.removeListener('variables_changed', this.activeTallyOnListener)
-			delete this.activeTallyOnListener
-		}
 		this.debug('destroy', this.id)
 	}
 
@@ -455,13 +388,11 @@ class instance extends instance_skel {
 		this.checkFeedbacks('tally_PGM', 'tally_PVW', 'recording')
 		this.initConnection()
 		this.initPresets()
-		this.setupEventListeners()
 	}
 
 	updateConfig(config) {
 		this.config = config
 		this.initConnection()
-		this.setupEventListeners()
 	}
 
 	initVariables() {
