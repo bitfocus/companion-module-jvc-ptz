@@ -1,498 +1,530 @@
-exports.getPresets = function () {
-	let presets = []
+const { combineRgb } = require('@companion-module/base')
+
+module.exports = async function (self) {
+
+	let presets = {}
 
 	// Stealth Toggle
-	presets.push({
+	presets['UP'] = {
 		category: 'Pan/Tilt',
-		label: 'UP',
-		bank: {
-			style: 'png',
+		name: 'UP',
+		type: 'button',
+		style: {
 			text: '',
-			png64: this.ICON_UP,
+			png64: self.ICON_UP,
 			pngalignment: 'center:center',
 			size: '18',
-			color: '16777215',
-			bgcolor: this.rgb(0, 0, 0)
+			color: 16777215,
+			bgcolor: 0
 		},
-		actions: [
-			{
-				action: 'joyStickOperationTilt',
-				options: {
-					direction: 'Up',
-					speed: '15'
+		steps: [{
+			down: [
+				{
+					actionId: 'joyStickOperationTilt',
+					options: {
+						direction: 'Up',
+						speed: '15'
+					}
 				}
-			}
-		],
-		release_actions: [
-			{
-				action: 'joyStickOperationTilt',
-				options: {
-					direction: 'Stop',
-					speed: '0'
+			],
+			up: [
+				{
+					actionId: 'joyStickOperationTilt',
+					options: {
+						direction: 'Stop',
+						speed: '0'
+					}
 				}
-			}
-		]
-	});
-	presets.push({
+			]
+		}]
+	};
+	presets['DOWN'] = {
 		category: 'Pan/Tilt',
-		label: 'DOWN',
-		bank: {
-			style: 'png',
+		name: 'DOWN',
+		type: 'button',
+		style: {
 			text: '',
-			png64: this.ICON_DOWN,
+			png64: self.ICON_DOWN,
 			pngalignment: 'center:center',
 			size: '18',
-			color: '16777215',
-			bgcolor: this.rgb(0, 0, 0)
+			color: 16777215,
+			bgcolor: 0
 		},
-		actions: [
-			{
-				action: 'joyStickOperationTilt',
-				options: {
-					direction: 'Down',
-					speed: '15'
+		steps: [{
+			down: [
+				{
+					actionId: 'joyStickOperationTilt',
+					options: {
+						direction: 'Down',
+						speed: '15'
+					}
 				}
-			}
-		],
-		release_actions: [
-			{
-				action: 'joyStickOperationTilt',
-				options: {
-					direction: 'Stop',
-					speed: '0'
+			],
+			up: [
+				{
+					actionId: 'joyStickOperationTilt',
+					options: {
+						direction: 'Stop',
+						speed: '0'
+					}
 				}
-			}
-		]
-	});
-	presets.push({
+			]
+		}]
+	};
+	presets['RIGHT'] = {
 		category: 'Pan/Tilt',
-		label: 'RIGHT',
-		bank: {
-			style: 'png',
+		name: 'RIGHT',
+		type: 'button',
+		style: {
 			text: '',
-			png64: this.ICON_RIGHT,
+			png64: self.ICON_RIGHT,
 			pngalignment: 'center:center',
 			size: '18',
-			color: '16777215',
-			bgcolor: this.rgb(0, 0, 0)
+			color: 16777215,
+			bgcolor: 0
 		},
-		actions: [
-			{
-				action: 'joyStickOperationPan',
-				options: {
-					direction: 'Right',
-					speed: '15'
+		steps: [{
+			down: [
+				{
+					actionId: 'joyStickOperationPan',
+					options: {
+						direction: 'Right',
+						speed: '15'
+					}
 				}
-			}
-		],
-		release_actions: [
-			{
-				action: 'joyStickOperationPan',
-				options: {
-					direction: 'Stop',
-					speed: '0'
+			],
+			up: [
+				{
+					actionId: 'joyStickOperationPan',
+					options: {
+						direction: 'Stop',
+						speed: '0'
+					}
 				}
-			}
-		]
-	});
-	presets.push({
+			]
+		}]
+	};
+	presets['LEFT'] = {
 		category: 'Pan/Tilt',
-		label: 'LEFT',
-		bank: {
-			style: 'png',
+		name: 'LEFT',
+		type: 'button',
+		style: {
 			text: '',
-			png64: this.ICON_LEFT,
+			png64: self.ICON_LEFT,
 			pngalignment: 'center:center',
 			size: '18',
-			color: '16777215',
-			bgcolor: this.rgb(0, 0, 0)
+			color: 16777215,
+			bgcolor: 0
 		},
-		actions: [
-			{
-				action: 'joyStickOperationPan',
-				options: {
-					direction: 'Left',
-					speed: '15'
+		steps: [{
+			down: [
+				{
+					actionId: 'joyStickOperationPan',
+					options: {
+						direction: 'Left',
+						speed: '15'
+					}
 				}
-			}
-		],
-		release_actions: [
-			{
-				action: 'joyStickOperationPan',
-				options: {
-					direction: 'Stop',
-					speed: '0'
+			],
+			up: [
+				{
+					actionId: 'joyStickOperationPan',
+					options: {
+						direction: 'Stop',
+						speed: '0'
+					}
 				}
-			}
-		]
-	});
-	presets.push({
+			]
+		}]
+	};
+	presets['RIGHTUP'] = {
 		category: 'Pan/Tilt',
-		label: 'RIGHTUP',
-		bank: {
-			style: 'png',
+		name: 'RIGHTUP',
+		type: 'button',
+		style: {
 			text: '',
-			png64: this.ICON_UP_RIGHT,
+			png64: self.ICON_UP_RIGHT,
 			pngalignment: 'center:center',
 			size: '18',
-			color: '16777215',
-			bgcolor: this.rgb(0, 0, 0)
+			color: 16777215,
+			bgcolor: 0
 		},
-		actions: [
-			{
-				action: 'joyStickOperationPan',
-				options: {
-					direction: 'RightUp',
-					speed: '15'
+		steps: [{
+			down: [
+				{
+					actionId: 'joyStickOperationPan',
+					options: {
+						direction: 'RightUp',
+						speed: '15'
+					}
 				}
-			}
-		],
-		release_actions: [
-			{
-				action: 'joyStickOperationPan',
-				options: {
-					direction: 'Stop',
-					speed: '0'
+			],
+			up: [
+				{
+					actionId: 'joyStickOperationPan',
+					options: {
+						direction: 'Stop',
+						speed: '0'
+					}
 				}
-			}
-		]
-	});
-	presets.push({
+			]
+		}]
+	};
+	presets['RIGHTDOWN'] = {
 		category: 'Pan/Tilt',
-		label: 'RIGHTDOWN',
-		bank: {
-			style: 'png',
+		name: 'RIGHTDOWN',
+		type: 'button',
+		style: {
 			text: '',
-			png64: this.ICON_DOWN_RIGHT,
+			png64: self.ICON_DOWN_RIGHT,
 			pngalignment: 'center:center',
 			size: '18',
-			color: '16777215',
-			bgcolor: this.rgb(0, 0, 0)
+			color: 16777215,
+			bgcolor: 0
 		},
-		actions: [
-			{
-				action: 'joyStickOperationPan',
-				options: {
-					direction: 'RightDown',
-					speed: '15'
+		steps: [{
+			down: [
+				{
+					actionId: 'joyStickOperationPan',
+					options: {
+						direction: 'RightDown',
+						speed: '15'
+					}
 				}
-			}
-		],
-		release_actions: [
-			{
-				action: 'joyStickOperationPan',
-				options: {
-					direction: 'Stop',
-					speed: '0'
+			],
+			up: [
+				{
+					actionId: 'joyStickOperationPan',
+					options: {
+						direction: 'Stop',
+						speed: '0'
+					}
 				}
-			}
-		]
-	});
-	presets.push({
+			]
+		}]
+	};
+	presets['LEFTUP'] = {
 		category: 'Pan/Tilt',
-		label: 'LEFTUP',
-		bank: {
-			style: 'png',
+		name: 'LEFTUP',
+		type: 'button',
+		style: {
 			text: '',
-			png64: this.ICON_UP_LEFT,
+			png64: self.ICON_UP_LEFT,
 			pngalignment: 'center:center',
 			size: '18',
-			color: '16777215',
-			bgcolor: this.rgb(0, 0, 0)
+			color: 16777215,
+			bgcolor: 0
 		},
-		actions: [
-			{
-				action: 'joyStickOperationPan',
-				options: {
-					direction: 'LeftUp',
-					speed: '15'
+		steps: [{
+			down: [
+				{
+					actionId: 'joyStickOperationPan',
+					options: {
+						direction: 'LeftUp',
+						speed: '15'
+					}
 				}
-			}
-		],
-		release_actions: [
-			{
-				action: 'joyStickOperationPan',
-				options: {
-					direction: 'Stop',
-					speed: '0'
+			],
+			up: [
+				{
+					actionId: 'joyStickOperationPan',
+					options: {
+						direction: 'Stop',
+						speed: '0'
+					}
 				}
-			}
-		]
-	});
-	presets.push({
+			]
+		}]
+	};
+	presets['LEFTDOWN'] = {
 		category: 'Pan/Tilt',
-		label: 'LEFTDOWN',
-		bank: {
-			style: 'png',
+		name: 'LEFTDOWN',
+		type: 'button',
+		style: {
 			text: '',
-			png64: this.ICON_DOWN_LEFT,
+			png64: self.ICON_DOWN_LEFT,
 			pngalignment: 'center:center',
 			size: '18',
-			color: '16777215',
-			bgcolor: this.rgb(0, 0, 0)
+			color: 16777215,
+			bgcolor: 0
 		},
-		actions: [
-			{
-				action: 'joyStickOperationPan',
-				options: {
-					direction: 'LeftDown',
-					speed: '15'
+		steps: [{
+			down: [
+				{
+					actionId: 'joyStickOperationPan',
+					options: {
+						direction: 'LeftDown',
+						speed: '15'
+					}
 				}
-			}
-		],
-		release_actions: [
-			{
-				action: 'joyStickOperationPan',
-				options: {
-					direction: 'Stop',
-					speed: '0'
+			],
+			up: [
+				{
+					actionId: 'joyStickOperationPan',
+					options: {
+						direction: 'Stop',
+						speed: '0'
+					}
 				}
-			}
-		]
-	});
+			]
+		}]
+	}
 
-
-
-
-	presets.push({
+	presets['Pan left'] = {
 		category: 'Pan/Tilt',
-		label: 'Pan left',
-		bank: {
-			style: 'text',
+		name: 'Pan left',
+		type: 'button',
+		style: {
 			text: 'Pan left, speed 15',
 			size: '14',
-			color: this.rgb(0, 0, 0),
-			bgcolor: this.rgb(235, 235, 235)
+			color: 0,
+			bgcolor: combineRgb(235, 235, 235)
 		},
-		actions: [
-			{
-				action: 'joyStickOperationPan',
-				options: {
-					direction: 'Left',
-					speed: '15'
+		steps: [{
+			down: [
+				{
+					actionId: 'joyStickOperationPan',
+					options: {
+						direction: 'Left',
+						speed: '15'
+					}
 				}
-			}
-		],
-		release_actions: [
-			{
-				action: 'joyStickOperationPan',
-				options: {
-					direction: 'Stop',
-					speed: '0'
+			],
+			up: [
+				{
+					actionId: 'joyStickOperationPan',
+					options: {
+						direction: 'Stop',
+						speed: '0'
+					}
 				}
-			}
-		]
-	})
+			]
+		}]
+	}
 
-	presets.push({
+	presets['Pan right'] = {
 		category: 'Pan/Tilt',
-		label: 'Pan right',
-		bank: {
-			style: 'text',
+		name: 'Pan right',
+		type: 'button',
+		style: {
 			text: 'Pan right, speed 15',
 			size: '14',
-			color: this.rgb(0, 0, 0),
-			bgcolor: this.rgb(235, 235, 235)
+			color: 0,
+			bgcolor: combineRgb(235, 235, 235)
 		},
-		actions: [
-			{
-				action: 'joyStickOperationPan',
-				options: {
-					direction: 'Right',
-					speed: '15'
+		steps: [{
+			down: [
+				{
+					actionId: 'joyStickOperationPan',
+					options: {
+						direction: 'Right',
+						speed: '15'
+					}
 				}
-			}
-		],
-		release_actions: [
-			{
-				action: 'joyStickOperationPan',
-				options: {
-					direction: 'Stop',
-					speed: '0'
+			],
+			up: [
+				{
+					actionId: 'joyStickOperationPan',
+					options: {
+						direction: 'Stop',
+						speed: '0'
+					}
 				}
-			}
-		]
-	})
+			]
+		}]
+	}
 
-	presets.push({
+	presets['Tilt up'] = {
 		category: 'Pan/Tilt',
-		label: 'Tilt up',
-		bank: {
-			style: 'text',
+		name: 'Tilt up',
+		type: 'button',
+		style: {
 			text: 'Tilt up, speed 15',
 			size: '14',
-			color: this.rgb(0, 0, 0),
-			bgcolor: this.rgb(235, 235, 235)
+			color: 0,
+			bgcolor: combineRgb(235, 235, 235)
 		},
-		actions: [
-			{
-				action: 'joyStickOperationTilt',
-				options: {
-					direction: 'Up',
-					speed: '15'
+		steps: [{
+			down: [
+				{
+					actionId: 'joyStickOperationTilt',
+					options: {
+						direction: 'Up',
+						speed: '15'
+					}
 				}
-			}
-		],
-		release_actions: [
-			{
-				action: 'joyStickOperationTilt',
-				options: {
-					direction: 'Stop',
-					speed: '0'
+			],
+			up: [
+				{
+					actionId: 'joyStickOperationTilt',
+					options: {
+						direction: 'Stop',
+						speed: '0'
+					}
 				}
-			}
-		]
-	})
+			]
+		}]
+	}
 
-	presets.push({
+	presets['Tilt Down'] = {
 		category: 'Pan/Tilt',
-		label: 'Tilt Down',
-		bank: {
-			style: 'text',
+		name: 'Tilt Down',
+		type: 'button',
+		style: {
 			text: 'Tilt down, speed 15',
 			size: '14',
-			color: this.rgb(0, 0, 0),
-			bgcolor: this.rgb(235, 235, 235)
+			color: 0,
+			bgcolor: combineRgb(235, 235, 235)
 		},
-		actions: [
-			{
-				action: 'joyStickOperationTilt',
-				options: {
-					direction: 'Down',
-					speed: '15'
+		steps: [{
+			down: [
+				{
+					actionId: 'joyStickOperationTilt',
+					options: {
+						direction: 'Down',
+						speed: '15'
+					}
 				}
-			}
-		],
-		release_actions: [
-			{
-				action: 'joyStickOperationTilt',
-				options: {
-					direction: 'Stop',
-					speed: '0'
+			],
+			up: [
+				{
+					actionId: 'joyStickOperationTilt',
+					options: {
+						direction: 'Stop',
+						speed: '0'
+					}
 				}
-			}
-		]
-	})
+			]
+		}]
+	}
 
-	presets.push({
+	presets['Zoom Tele2'] = {
 		category: 'Zoom/Focus',
-		label: 'Zoom Tele2',
-		bank: {
-			style: 'text',
+		name: 'Zoom Tele2',
+		type: 'button',
+		style: {
 			text: 'Zoom Tele2',
 			size: '14',
-			color: this.rgb(0, 0, 0),
-			bgcolor: this.rgb(235, 235, 235)
+			color: 0,
+			bgcolor: combineRgb(235, 235, 235)
 		},
-		actions: [
-			{
-				action: 'zoom',
-				options: {
-					button: 'Tele2',
-					speed: '15'
+		steps: [{
+			down: [
+				{
+					actionId: 'zoom',
+					options: {
+						button: 'Tele2',
+						speed: '15'
+					}
 				}
-			}
-		],
-		release_actions: [
-			{
-				action: 'zoom',
-				options: {
-					button: 'Stop',
-					speed: '0'
+			],
+			up: [
+				{
+					actionId: 'zoom',
+					options: {
+						button: 'Stop',
+						speed: '0'
+					}
 				}
-			}
-		]
-	})
+			]
+		}]
+	}
 
-	presets.push({
+	presets['Zoom Wide2'] = {
 		category: 'Zoom/Focus',
-		label: 'Zoom Wide2',
-		bank: {
-			style: 'text',
+		name: 'Zoom Wide2',
+		type: 'button',
+		style: {
 			text: 'Zoom Wide2',
 			size: '14',
-			color: this.rgb(0, 0, 0),
-			bgcolor: this.rgb(235, 235, 235)
+			color: 0,
+			bgcolor: combineRgb(235, 235, 235)
 		},
-		actions: [
-			{
-				action: 'zoom',
-				options: {
-					button: 'Wide2',
-					speed: '15'
+		steps: [{
+			down: [
+				{
+					actionId: 'zoom',
+					options: {
+						button: 'Wide2',
+						speed: '15'
+					}
 				}
-			}
-		],
-		release_actions: [
-			{
-				action: 'zoom',
-				options: {
-					button: 'Stop',
-					speed: '0'
+			],
+			up: [
+				{
+					actionId: 'zoom',
+					options: {
+						button: 'Stop',
+						speed: '0'
+					}
 				}
-			}
-		]
-	})
+			]
+		}]
+	}
 
-	presets.push({
+	presets['Focus Near2'] = {
 		category: 'Zoom/Focus',
-		label: 'Focus Near2',
-		bank: {
-			style: 'text',
+		name: 'Focus Near2',
+		type: 'button',
+		style: {
 			text: 'Focus Near2',
 			size: '14',
-			color: this.rgb(0, 0, 0),
-			bgcolor: this.rgb(235, 235, 235)
+			color: 0,
+			bgcolor: combineRgb(235, 235, 235)
 		},
-		actions: [
-			{
-				action: 'focus',
-				options: {
-					button: 'Near2',
-					speed: '15'
+		steps: [{
+			down: [
+				{
+					actionId: 'focus',
+					options: {
+						button: 'Near2',
+						speed: '15'
+					}
 				}
-			}
-		],
-		release_actions: [
-			{
-				action: 'focus',
-				options: {
-					button: 'Stop',
-					speed: '0'
+			],
+			up: [
+				{
+					actionId: 'focus',
+					options: {
+						button: 'Stop',
+						speed: '0'
+					}
 				}
-			}
-		]
-	})
+			]
+		}]
+	}
 
-	presets.push({
+	presets['Focus Far2'] = {
 		category: 'Zoom/Focus',
-		label: 'Focus Far2',
-		bank: {
-			style: 'text',
+		name: 'Focus Far2',
+		type: 'button',
+		style: {
 			text: 'Focus Far2',
 			size: '14',
-			color: this.rgb(0, 0, 0),
-			bgcolor: this.rgb(235, 235, 235)
+			color: 0,
+			bgcolor: combineRgb(235, 235, 235)
 		},
-		actions: [
-			{
-				action: 'focus',
-				options: {
-					button: 'Far2',
-					speed: '15'
+		steps: [{
+			down: [
+				{
+					actionId: 'focus',
+					options: {
+						button: 'Far2',
+						speed: '15'
+					}
 				}
-			}
-		],
-		release_actions: [
-			{
-				action: 'focus',
-				options: {
-					button: 'Stop',
-					speed: '0'
+			],
+			up: [
+				{
+					actionId: 'focus',
+					options: {
+						button: 'Stop',
+						speed: '0'
+					}
 				}
-			}
-		]
-	})
+			]
+		}]
+	}
 
-	return presets
+	self.setPresetDefinitions(presets)
 }

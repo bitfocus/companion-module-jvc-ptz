@@ -1,73 +1,110 @@
-let instance_skel = require('../../instance_skel')
-let actions = require('./actions')
-let presets = require('./presets')
-let feedbacks = require('./feedbacks')
-let urllib = require('urllib')
+const { InstanceBase, Regex, runEntrypoint, InstanceStatus } = require('@companion-module/base')
+const UpgradeScripts = require('./upgrades')
+const UpdateActions = require('./actions')
+const UpdateFeedbacks = require('./feedbacks')
+const UpdatePresets = require('./presets')
+const UpdateVariableDefinitions = require('./variables')
+const { request } = require('urllib')
 
-class instance extends instance_skel {
-	constructor(system, id, config) {
-		super(system, id, config)
+class JvcPtzInstance extends InstanceBase {
+	constructor(internal) {
+		super(internal)
+	}
 
-		Object.assign(this, {
-			...actions,
-			...presets,
-			...feedbacks,
-		})
+	async init(config) {
+		this.config = config
 
+		this.updateStatus(InstanceStatus.Connecting)
+		
+		this.updateActions() // export actions
+		this.updateFeedbacks() // export feedbacks
+		this.updatePresets() // export preset definitions
+		this.updateVariableDefinitions() // export variable definitions
+		
+		this.initConnection()
+
+	}
+
+	initState() {
 		this.tally = 'Off'
 		this.record = -1
 		this.stream = -1
 		this.sessionID = null
 		this.tilt = "Stop"
 		this.direction = ""
+		this.tracking = undefined
 	}
 
-	initActions() {
-		this.setActions(this.getActions())
-	}
+	async initConnection() {
+		this.stopPolling() // if we need to reinit, stop polling until successful
 
-	initConnection() {
-		if (this.config.host !== undefined && this.config.username !== undefined && this.config.password !== undefined) {
-			this.processAuthentication()
+		if (this.config.host && this.config.username && this.config.password) {
+			this.initState()
+			if (this.authtimeout) {
+				clearTimeout(this.authtimeout)
+				delete this.authtimeout
+			}
+			try {	
+				await this.processAuthentication()
+				this.sendCommand({ Command: 'GetSystemInfo' })
+				if (this.config.polling && this.config.interval > 0) this.startPolling()
+				setTimeout(() => {
+					this.getCamStatus()
+				}, 100)	
+			} catch (error) {
+				if (error === 401) {
+					this.log('error', 'Login failed, retry in 2s.')
+				} else {
+					this.log('error', 'Init connection failed, retry in 2s. Error: ' + error)
+				}
+				this.authtimeout = setTimeout(() => {
+					this.initConnection()
+				}, 1925)
+
+			}
 		} else {
-			this.log('error', 'Apply instance settings')
+			this.updateStatus(InstanceStatus.BadConfig)
 		}
 	}
 
-	processAuthentication() {
-		this.status(this.STATUS_WARNING, 'Logging in')
-		urllib
-			.request(this.config.host + '/api.php', { digestAuth: `${this.config.username}:${this.config.password}` })
-			.then((result) => {
-				// store header information
-				let headersObj = result.res.headers
-				this.sessionID = headersObj['set-cookie'][1].slice(10)
-
-				this.status(this.STATUS_OK)
-				this.sendCommand({ Request: { Command: 'GetSystemInfo', SessionID: this.sessionID } })
-				setTimeout(() => {
-					this.getCamStatus()
-				}, 500)
-				//this.log('info', 'sessionID: ' + this.sessionID)
-			})
-			.catch((err) => {
-				this.log('error', 'Error: ' + err)
-			})
+	// When module gets deleted
+	async destroy() {
+		if (this.authtimeout) {
+			clearTimeout(this.authtimeout)
+			delete this.authtimeout
+		}
+		this.stopPolling()
+		this.log('debug', 'destroy')
 	}
 
-	config_fields() {
+	async configUpdated(config) {
+		let oldconfig = this.config
+		this.config = config
+		if (config.host !== oldconfig.host || config.username !== oldconfig.username || config.password !== oldconfig.password) {
+			this.initConnection()
+		}
+		if (config.polling === false && this.interval) {
+			this.stopPolling()
+		} else if ((config.polling === true && !this.interval) || (config.polling === true && config.interval != oldconfig.interval)) {
+			this.startPolling()
+		}
+
+	}
+
+	// Return config fields for web config
+	getConfigFields() {
 		return [
 			{
-				type: 'text',
+				type: 'static-text',
 				id: 'info',
 				width: 12,
 				label: 'Information',
-				value: "This module is for the JVC PTZ KZ100 camera's. Some functions may not work on different models.",
+				value: "This module is tested with the JVC PTZ KZ100 and KY510 cameras. Some functions may not work on different models.",
 			},
 			{
 				type: 'textinput',
 				id: 'host',
-				width: 6,
+				width: 12,
 				label: 'Target IP Address',
 				// regex: this.REGEX_IP
 			},
@@ -76,340 +113,205 @@ class instance extends instance_skel {
 				id: 'username',
 				label: 'Username',
 				default: 'jvc',
-				width: 5,
+				width: 6,
 			},
 			{
 				type: 'textinput',
 				id: 'password',
 				label: 'Password',
 				default: '0000',
-				width: 5,
+				width: 6,
 			},
 			{
-				type: 'text',
-				id: 'tallyOnInfo',
-				width: 12,
-				label: 'Tally On',
-				value: 	'Support for Tally On is no longer possible. Instead you can set this up as a trigger, and get additional control',
+				type: 'checkbox',
+				id: 'polling',
+				label: 'Use polling of status',
+				default: false,
+				width: 3,
 			},
+			{
+				type: 'number',
+				id: 'interval',
+				label: 'Polling Interval (seconds)',
+				default: 2,
+				width: 9,
+				min: 0.5,
+				max: 5000,
+				step: 0.1,
+				isVisible: (opt) => {return opt.polling === true}
+			},
+	
 		]
 	}
 
-	action(action) {
-		let id = action.action
-		let opt = action.options
-		let jvcPTZObj = {}
+	updateActions() {
+		UpdateActions(this)
+	}
 
-		switch (id) {
-			case 'getCamStatus':
-				jvcPTZObj = { Request: { Command: 'GetCamStatus', SessionID: this.sessionID } }
-				break
+	updateFeedbacks() {
+		UpdateFeedbacks(this)
+	}
 
-			case 'setGain':
-				jvcPTZObj = { Request: { Command: 'Gain' } }
-				break
+	updatePresets() {
+		UpdatePresets(this)
+	}
 
-			case 'setZoomCtrl':
-				jvcPTZObj = {
-					Request: { Command: 'SetZoomCtrl', SessionID: this.sessionID, Params: { Position: opt.position } },
-				}
-				break
+	updateVariableDefinitions() {
+		UpdateVariableDefinitions(this)
+	}
 
-			case 'setPresetZoomPosition':
-				jvcPTZObj = {
-					Request: {
-						Command: 'SetPresetZoomPosition',
-						SessionID: this.sessionID,
-						Params: { ID: opt.positionStore, Position: opt.position },
-					},
-				}
-				break
+	async processAuthentication() {
+		this.updateStatus(InstanceStatus.Connecting, 'Logging in')
 
-			case 'gain':
-				jvcPTZObj = {
-					Request: {
-						Command: 'SetWebButtonEvent',
-						SessionID: this.sessionID,
-						Params: { Kind: 'Gain', Button: opt.button },
-					},
-				}
-				break
-
-			case 'whb':
-				jvcPTZObj = {
-					Request: {
-						Command: 'SetWebButtonEvent',
-						SessionID: this.sessionID,
-						Params: { Kind: 'Whb', Button: opt.button },
-					},
-				}
-				break
-
-			case 'zoom':
-				jvcPTZObj = {
-					Request: {
-						Command: 'SetWebButtonEvent',
-						SessionID: this.sessionID,
-						Params: { Kind: 'Zoom', Button: opt.button },
-					},
-				}
-				break
-
-			case 'focus':
-				jvcPTZObj = {
-					Request: {
-						Command: 'SetWebButtonEvent',
-						SessionID: this.sessionID,
-						Params: { Kind: 'Focus', Button: opt.button },
-					},
-				}
-				break
-
-			case 'iris':
-				jvcPTZObj = {
-					Request: {
-						Command: 'SetWebButtonEvent',
-						SessionID: this.sessionID,
-						Params: { Kind: 'Iris', Button: opt.button },
-					},
-				}
-				break
-
-			case 'exposure':
-				jvcPTZObj = {
-					Request: {
-						Command: 'SetWebButtonEvent',
-						SessionID: this.sessionID,
-						Params: { Kind: 'Exposure', Button: opt.button },
-					},
-				}
-				break
-
-			case 'joyStickOperationPan':
-				this.tilt = "Stop"
-				this.direction = opt.direction
-				switch (opt.direction) {
-				case "RightUp":
-					this.tilt = "Up"
-					this.direction = "Right"
-					break
-				case "RightDown":
-					this.tilt = "Down"
-					this.direction = "Right"
-					break
-				case "LeftUp":
-					this.tilt = "Up"
-					this.direction = "Left"
-					break
-				case "LeftDown":
-					this.tilt = "Down"
-					this.direction = "Left"
-					break
-				}
-				jvcPTZObj = {
-					Request: {
-						Command: 'JoyStickOperation',
-						SessionID: this.sessionID,
-						Params: { PanDirection: this.direction, PanSpeed: parseInt(opt.speed), TiltDirection: this.tilt, TiltSpeed: parseInt(opt.speed) },
-					},
-				}
-				break
-
-			case 'joyStickOperationTilt':
-				jvcPTZObj = {
-					Request: {
-						Command: 'JoyStickOperation',
-						SessionID: this.sessionID,
-						Params: { PanDirection: 'Stop', PanSpeed: 0, TiltDirection: opt.direction, TiltSpeed: parseInt(opt.speed) },
-					},
-				}
-				break
-
-			case 'setPTZPreset':
-				jvcPTZObj = {
-					Request: {
-						Command: 'SetPTZPreset',
-						SessionID: this.sessionID,
-						Params: { No: parseInt(opt.preset), Operation: opt.operation },
-					},
-				}
-				break
-
-			case 'SetWebSliderEvent':
-				jvcPTZObj = {
-					Request: {
-						Command: 'SetWebSliderEvent',
-						SessionID: this.sessionID,
-						Params: { Kind: opt.kind, Position: parseInt(opt.position) },
-					},
-				}
-				break
-
-			case 'zoomSwitchOperation':
-				jvcPTZObj = {
-					Request: {
-						Command: 'ZoomSwitchOperation',
-						SessionID: this.sessionID,
-						Params: { Direction: opt.direction, Speed: parseInt(opt.speed) },
-					},
-				}
-				break
-
-			case 'setCamCtrl':
-				jvcPTZObj = { Request: { Command: 'SetCamCtrl', SessionID: this.sessionID, Params: { CamCtrl: opt.ctrl } } }
-				break
-
-			case 'setStreamingCtrl':
-				jvcPTZObj = { Request: { Command: 'SetStreamingCtrl', SessionID: this.sessionID, Params: { Streaming: opt.ctrl } } }
-				break
-
-			case 'setStudioTally':
-				jvcPTZObj = {
-					Request: { Command: 'SetStudioTally', SessionID: this.sessionID, Params: { Indication: opt.ctrl } },
-				}
-				this.Tally = opt.ctrl
-				this.checkFeedbacks('tally_PGM', 'tally_PVW')
-				break
-
-			case 'checkPVWtoPGM':
-				if (this.tally == 'Preview') {
-					jvcPTZObj = {
-						Request: { Command: 'SetStudioTally', SessionID: this.sessionID, Params: { Indication: 'Program' } },
-					}
-				}
-				this.Tally = 'Program'
-				this.checkFeedbacks('tally_PGM')
-				break
-
-			case 'setStudioPVWTally':
-				jvcPTZObj = {
-					Request: { Command: 'SetStudioTally', SessionID: this.sessionID, Params: { Indication: 'Preview' } },
-				}
-				this.Tally = 'Preview'
-				this.checkFeedbacks('tally_PVW')
-				break
-
-			case 'setStudioPGMTally':
-				jvcPTZObj = {
-					Request: { Command: 'SetStudioTally', SessionID: this.sessionID, Params: { Indication: 'Program' } },
-				}
-				this.Tally = 'Program'
-				this.checkFeedbacks('tally_PGM')
-				break
-
-			case 'setStudioOFFTally':
-				jvcPTZObj = { Request: { Command: 'SetStudioTally', SessionID: this.sessionID, Params: { Indication: 'Off' } } }
-				this.Tally = 'Off'
-				this.checkFeedbacks('tally_PGM')
-				break
-		}
-
-		if (this.isEmpty(jvcPTZObj)) {
-			this.log('error', 'no command, array empty')
-		} else {
-			this.sendCommand(jvcPTZObj)
-			setTimeout(() => {
-				this.getCamStatus()
-			}, 500)
+		try {
+			let {status, statusText, headers} = await request(this.config.host + '/api.php', { digestAuth: `${this.config.username}:${this.config.password}` })
+			if (status === 200) {
+				this.sessionID = headers['set-cookie'][1].slice(10)
+				this.updateStatus(InstanceStatus.Ok)
+				//this.log('info', 'sessionID: ' + this.sessionID)
+				return Promise.resolve(200)
+			} else if (status === 401) {
+				this.updateStatus(InstanceStatus.ConnectionFailure)
+				this.log('error', `Connection to ${this.config.host} failed because of authentication error. Check your login and password.`)
+				return Promise.reject(status)
+			} else if (status >= 400) {
+				this.updateStatus(InstanceStatus.ConnectionFailure)
+				this.log('error', `Error ${status} ${statusText} while trying to access ${this.config.host}/api.php`)
+				return Promise.reject(status)
+			}
+	
+		} catch (error) {
+			this.updateStatus(InstanceStatus.ConnectionFailure)
+			this.log('error', 'Error while trying to login: ' + error.message)
+			return Promise.reject(error.message)
 		}
 	}
 
-	getCamStatus() {
-		this.sendCommand({ Request: { Command: 'GetCamStatus', SessionID: this.sessionID } })
-	}
+	async sendCommand(cmdObj) {
+		if (this.sessionID === null) {
+			this.log('warn', `Can't send command when not logged in`)
+			return 401
+		}
+		let jvcPTZObj = {
+			Request: {
+				...cmdObj,
+				SessionID: this.sessionID,
+			}
+		}
+		console.log('sending', JSON.stringify(jvcPTZObj))
 
-	sendCommand(jvcPTZObj) {
-		//console.log(JSON.stringify(jvcPTZObj))
-		urllib
-			.request(this.config.host + '/cgi-bin/api.cgi', {
+		try {
+			let {status, statusText, data} = await request(this.config.host + '/cgi-bin/api.cgi', {
 				method: 'POST',
 				headers: {
 					'Content-Type': 'application/json',
 				},
 				content: JSON.stringify(jvcPTZObj),
 			})
-			.then((result) => {
-				let resObj = result.res.data
-				//this.log(resObj)
-				this.processIncomingData(resObj)
+	
+			if (status === 200) {
+				let resultObj = JSON.parse(data)
+				console.log('incoming: ' + data)
+				if (resultObj.Response?.Result === 'SessionError') {
+					// for some reason the Session has terminated or changed
+					await this.initConnection() // reinit connection
+					this.sendCommand(cmdObj) // resend command
+					return
+				}
+				this.processIncomingData(resultObj)
+				this.updateStatus(InstanceStatus.Ok)
+				return Promise.resolve(status)
+
+			} else if (status === 401) {
+				this.updateStatus(InstanceStatus.ConnectionFailure)
+				this.log('error', `Connection to ${this.config.host} failed because of authentication error.`) // TODO: handle authentication
+				return Promise.reject(status)
+
+			} else if (status >= 400) {
+				this.updateStatus(InstanceStatus.ConnectionFailure)
+				this.log('error', `Error ${statusText} while trying to access ${this.config.host}/cgi-bin/api.cgi`)
+				return Promise.reject(status)
+
+			}
+		} catch (error) {
+			this.updateStatus(InstanceStatus.ConnectionFailure)
+			this.log('error', 'Error while sending command: ' + error)
+			return // Promise.reject(error.message)
+		}
+	}
+
+	getCamStatus() {
+		this.sendCommand({ Command: 'GetCamStatus' })
+		this.sendCommand({ Command: 'GetPTPosition' })
+	}
+
+	processIncomingData(resultObj) {
+		
+
+		if (resultObj.Response?.Requested === 'GetSystemInfo') {
+
+			this.setVariableValues({
+				model: resultObj.Response.Data.Model,
+				serial: resultObj.Response.Data.Serial
 			})
-			.catch((err) => {
-				this.log('error', 'Error: ' + err)
+
+		} else if (resultObj.Response?.Requested.startsWith('GetCamStatus')) {
+
+			if (resultObj.Response?.Data?.Camera?.Status) {
+				if (resultObj.Response.Data.Camera.Status != 'Rec') {
+					this.recording = -1
+				} else {
+					this.recording = 1
+				}
+				this.checkFeedbacks('recording')
+			}
+			
+			if (resultObj.Response?.Data?.Streaming?.Status) {
+				if (resultObj.Response.Data.Streaming.Status != 'Start') {
+					this.streaming = -1
+				} else {
+					this.streaming = 1
+				}
+				this.checkFeedbacks('streaming')
+			}
+
+			if (resultObj.Response?.Data?.Tracking?.Status) {
+				this.tracking = resultObj.Response.Data.Tracking.Status
+				this.checkFeedbacks('tracking')
+			}
+
+			if (resultObj.Response?.Data?.TallyLamp?.StudioTally) {
+				this.tally = resultObj.Response.Data.TallyLamp.StudioTally
+				this.checkFeedbacks('tally_PGM', 'tally_PVW')
+			}
+
+		} else if (resultObj.Response?.Requested === 'GetPTPosition') {
+			this.setVariableValues({
+				pan: resultObj.Response.Data.Pan,
+				tilt: resultObj.Response.Data.Tilt,
 			})
-	}
-
-	processIncomingData(data) {
-		let resultObj = JSON.parse(data)
-		console.log(JSON.stringify(resultObj))
-		if (resultObj.Response['Requested'] === 'GetSystemInfo') {
-			this.setVariable('model', resultObj.Response.Data['Model'])
-			this.setVariable('serial', resultObj.Response.Data['Serial'])
 		}
+	}
 
-		if (resultObj.Response.Data.Camera['Status'] != 'Rec') {
-			this.recording = -1
-		} else {
-			this.recording = 1
+	startPolling() {
+		this.stopPolling()
+		this.interval = setInterval(
+			(self) => {
+				self.sendCommand({ Command: 'GetCamStatusMinimum' })
+				this.sendCommand({ Command: 'GetPTPosition' })
+			},
+			this.config.interval * 1000,
+			this
+		)
+	}
+
+	stopPolling() {
+		if (this.interval) {
+			clearInterval(this.interval)
+			delete this.interval
 		}
-		this.checkFeedbacks('recording')
-
-		if (resultObj.Response.Data.Streaming['Status'] != 'Start') {
-			this.streaming = -1
-		} else {
-			this.streaming = 1
-		}
-		this.checkFeedbacks('streaming')
-
-		if (resultObj.Response.Data.TallyLamp['StudioTally'] == 'Program') {
-			this.tally = 'Program'
-		} else if (resultObj.Response.Data.TallyLamp['StudioTally'] == 'Preview') {
-			this.tally = 'Preview'
-		} else {
-			this.tally = 'Off'
-		}
-		this.checkFeedbacks('tally_PGM', 'tally_PVW')
 	}
 
-	isEmpty(obj) {
-		for (var key in obj) {
-			if (obj.hasOwnProperty(key)) return false
-		}
-		return true
-	}
-
-	destroy() {
-		this.debug('destroy', this.id)
-	}
-
-	init() {
-		this.initVariables()
-		this.initActions()
-		this.initFeedbacks()
-		this.checkFeedbacks('tally_PGM', 'tally_PVW', 'recording')
-		this.initConnection()
-		this.initPresets()
-	}
-
-	updateConfig(config) {
-		this.config = config
-		this.initConnection()
-	}
-
-	initVariables() {
-		var variables = [
-			{ name: 'model', label: 'Camera model' },
-			{ name: 'serial', label: 'Camera serial' },
-		]
-		this.setVariableDefinitions(variables)
-	}
-
-	initFeedbacks() {
-		this.setFeedbackDefinitions(this.getFeedbacks())
-	}
-
-	initPresets() {
-		this.setPresetDefinitions(this.getPresets())
-	}
 }
 
-exports = module.exports = instance
+runEntrypoint(JvcPtzInstance, UpgradeScripts)

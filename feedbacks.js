@@ -1,119 +1,83 @@
-module.exports = {
+const { combineRgb } = require('@companion-module/base')
 
-	getFeedbacks() {
-		var feedbacks = {};
+module.exports = async function (self) {
 
-		feedbacks['recording'] = {
-			label: 'Change background when recording',
-			description: 'When camera is recording, background color will change',
-			options: [
-				{
-					type: 'colorpicker',
-					label: 'Foreground color',
-					id: 'fg',
-					default: this.rgb(255, 255, 255)
-
-				},
-				{
-					type: 'colorpicker',
-					label: 'Background color',
-					id: 'bg',
-					default: this.rgb(255, 0, 0)
-				}
-			],
-			callback: (feedback, bank) => {
-				if (this.recording == 1) {
-					return {
-						color: feedback.options.fg,
-						bgcolor: feedback.options.bg
-					};
-				}
-			}
-		};
-		feedbacks['streaming'] = {
-			label: 'Change background when streaming',
-			description: 'When camera is streaming, background color will change',
-			options: [
-				{
-					type: 'colorpicker',
-					label: 'Foreground color',
-					id: 'fg',
-					default: this.rgb(255, 255, 255)
-
-				},
-				{
-					type: 'colorpicker',
-					label: 'Background color',
-					id: 'bg',
-					default: this.rgb(255, 0, 0)
-				}
-			],
-			callback: (feedback, bank) => {
-				if (this.streaming == 1) {
-					return {
-						color: feedback.options.fg,
-						bgcolor: feedback.options.bg
-					};
-				}
-			}
-		};
-
-		feedbacks['tally_PGM'] = {
-			label: 'Tally on PGM',
-			description: 'When the camera tally is on, change background color',
-			options: [
-				{
-					type: 'colorpicker',
-					label: 'Foreground color',
-					id: 'fg',
-					default: this.rgb(255, 255, 255)
-
-				},
-				{
-					type: 'colorpicker',
-					label: 'Background color',
-					id: 'bg',
-					default: this.rgb(255, 0, 0)
-				}
-			],
-			callback: (feedback, bank) => {
-				if (this.tally == 'Program') {
-					return {
-						color: feedback.options.fg,
-						bgcolor: feedback.options.bg
-					};
-				}
-			}
-		};
-
-		feedbacks['tally_PVW'] = {
-			label: 'Tally on PVW',
-			description: 'When the camera tally is on, change background color',
-			options: [
-				{
-					type: 'colorpicker',
-					label: 'Foreground color',
-					id: 'fg',
-					default: this.rgb(0, 0, 0)
-
-				},
-				{
-					type: 'colorpicker',
-					label: 'Background color',
-					id: 'bg',
-					default: this.rgb(250, 255, 0)
-				}
-			],
-			callback: (feedback, bank) => {
-				if (this.tally == "Preview") {
-					return {
-						color: feedback.options.fg,
-						bgcolor: feedback.options.bg
-					};
-				}
-			}
-		};
-
-		return feedbacks;
+	let feedbacks = {}
+	let defaultStyle = {
+		bgcolor: 0xff0000,
+		color: 0,
 	}
+
+	feedbacks['recording'] = {
+		name: 'Recording',
+		description: 'Change button style when camera is recording',
+		type: 'boolean',
+		defaultStyle,
+		options: [],
+		callback: (feedback) => {
+			if (self.recording == 1) {
+				return true
+			}
+			return false
+		}
+	}
+
+	feedbacks['streaming'] = {
+		name: 'Streaming',
+		description: 'Change button style when camera is streaming',
+		type: 'boolean',
+		defaultStyle,
+		options: [],
+		callback: (feedback) => {
+			if (self.streaming == 1) {
+				return true
+			}
+			return false
+		}
+	}
+
+	feedbacks['tracking'] = {
+		name: 'Tracking',
+		description: 'Change button style when tracking is active',
+		type: 'boolean',
+		defaultStyle,
+		options: [],
+		callback: (feedback) => {
+			if (self.tracking === 'On') {
+				return true
+			}
+			return false
+		}
+	}
+
+	feedbacks['tally_PGM'] = {
+		name: 'Tally on PGM',
+		description: 'Change button style when camera tally shows Program',
+		type: 'boolean',
+		defaultStyle,
+		options: [],
+		callback: (feedback) => {
+			if (self.tally == 'Program') {
+				return true
+			}
+			return false
+		}
+	}
+
+	feedbacks['tally_PVW'] = {
+		name: 'Tally on PVW',
+		description: 'Change button style when camera tally shows Preview',
+		type: 'boolean',
+		defaultStyle,
+		options: [],
+		callback: (feedback) => {
+			if (self.tally == "Preview") {
+				return true
+			}
+			return false
+		}
+	}
+
+	self.setFeedbackDefinitions(feedbacks)
+
 }
