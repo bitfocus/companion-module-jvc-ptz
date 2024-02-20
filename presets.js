@@ -10,11 +10,9 @@ module.exports = async function (self) {
 		name: 'UP',
 		type: 'button',
 		style: {
-			text: '',
-			png64: self.ICON_UP,
-			pngalignment: 'center:center',
-			size: '18',
-			color: 16777215,
+			text: '⬆',
+			size: '33',
+			color: 0xffffff,
 			bgcolor: 0
 		},
 		steps: [{
@@ -43,11 +41,9 @@ module.exports = async function (self) {
 		name: 'DOWN',
 		type: 'button',
 		style: {
-			text: '',
-			png64: self.ICON_DOWN,
-			pngalignment: 'center:center',
-			size: '18',
-			color: 16777215,
+			text: '⬇',
+			size: '33',
+			color: 0xffffff,
 			bgcolor: 0
 		},
 		steps: [{
@@ -76,11 +72,9 @@ module.exports = async function (self) {
 		name: 'RIGHT',
 		type: 'button',
 		style: {
-			text: '',
-			png64: self.ICON_RIGHT,
-			pngalignment: 'center:center',
-			size: '18',
-			color: 16777215,
+			text: '⮕',
+			size: '33',
+			color: 0xffffff,
 			bgcolor: 0
 		},
 		steps: [{
@@ -109,11 +103,9 @@ module.exports = async function (self) {
 		name: 'LEFT',
 		type: 'button',
 		style: {
-			text: '',
-			png64: self.ICON_LEFT,
-			pngalignment: 'center:center',
-			size: '18',
-			color: 16777215,
+			text: '⬅',
+			size: '33',
+			color: 0xffffff,
 			bgcolor: 0
 		},
 		steps: [{
@@ -142,11 +134,9 @@ module.exports = async function (self) {
 		name: 'RIGHTUP',
 		type: 'button',
 		style: {
-			text: '',
-			png64: self.ICON_UP_RIGHT,
-			pngalignment: 'center:center',
-			size: '18',
-			color: 16777215,
+			text: '⬈',
+			size: '33',
+			color: 0xffffff,
 			bgcolor: 0
 		},
 		steps: [{
@@ -175,11 +165,9 @@ module.exports = async function (self) {
 		name: 'RIGHTDOWN',
 		type: 'button',
 		style: {
-			text: '',
-			png64: self.ICON_DOWN_RIGHT,
-			pngalignment: 'center:center',
-			size: '18',
-			color: 16777215,
+			text: '⬊',
+			size: '33',
+			color: 0xffffff,
 			bgcolor: 0
 		},
 		steps: [{
@@ -208,11 +196,9 @@ module.exports = async function (self) {
 		name: 'LEFTUP',
 		type: 'button',
 		style: {
-			text: '',
-			png64: self.ICON_UP_LEFT,
-			pngalignment: 'center:center',
-			size: '18',
-			color: 16777215,
+			text: '⬉',
+			size: '33',
+			color: 0xffffff,
 			bgcolor: 0
 		},
 		steps: [{
@@ -241,11 +227,9 @@ module.exports = async function (self) {
 		name: 'LEFTDOWN',
 		type: 'button',
 		style: {
-			text: '',
-			png64: self.ICON_DOWN_LEFT,
-			pngalignment: 'center:center',
-			size: '18',
-			color: 16777215,
+			text: '⬋',
+			size: '33',
+			color: 0xffffff,
 			bgcolor: 0
 		},
 		steps: [{

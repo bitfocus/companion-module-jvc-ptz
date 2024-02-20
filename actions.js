@@ -19,35 +19,41 @@ module.exports = function (self) {
 				type: 'textinput',
 				id: 'speed',
 				default: '15',
-				regex: Regex.NUMBER
+				regex: Regex.NUMBER,
+				useVariables: true,
 			}
 		],
 		callback: async ({options}) => {
 			self.tilt = "Stop"
 			self.direction = options.direction
-			switch (options.direction) {
-			case "RightUp":
-				self.tilt = "Up"
-				self.direction = "Right"
-				break
-			case "RightDown":
-				self.tilt = "Down"
-				self.direction = "Right"
-				break
-			case "LeftUp":
-				self.tilt = "Up"
-				self.direction = "Left"
-				break
-			case "LeftDown":
-				self.tilt = "Down"
-				self.direction = "Left"
-				break
+			try {
+				let speed = parseInt( await self.parseVariablesInString(options.speed) )
+				switch (options.direction) {
+					case "RightUp":
+						self.tilt = "Up"
+						self.direction = "Right"
+						break
+					case "RightDown":
+						self.tilt = "Down"
+						self.direction = "Right"
+						break
+					case "LeftUp":
+						self.tilt = "Up"
+						self.direction = "Left"
+						break
+					case "LeftDown":
+						self.tilt = "Down"
+						self.direction = "Left"
+						break
+				}
+				self.sendCommand( {
+					Command: 'JoyStickOperation',
+					Params: { PanDirection: self.direction, PanSpeed: speed, TiltDirection: self.tilt, TiltSpeed: speed },
+				})
+				self.sendCommand({ Command: 'GetPTPosition' })
+			} catch (error) {
+				self.log('error', 'action failed: ' + error)				
 			}
-			self.sendCommand( {
-				Command: 'JoyStickOperation',
-				Params: { PanDirection: self.direction, PanSpeed: parseInt(options.speed), TiltDirection: self.tilt, TiltSpeed: parseInt(options.speed) },
-			})
-			self.sendCommand({ Command: 'GetPTPosition' })
 		},
 	}
 
@@ -66,15 +72,21 @@ module.exports = function (self) {
 				type: 'textinput',
 				id: 'speed',
 				default: '15',
-				regex: '/^([0-9]|[1-2][0-9]|100)$/'
+				regex: '/^([0-9]|[1-2][0-9]|100)$/',
+				useVariables: true,
 			}
 		],
 		callback: async ({options}) => {
-			self.sendCommand( {
-				Command: 'JoyStickOperation',
-				Params: { PanDirection: 'Stop', PanSpeed: 0, TiltDirection: options.direction, TiltSpeed: parseInt(options.speed) },
-			})
-			self.sendCommand({ Command: 'GetPTPosition' })
+			try {
+				let speed = parseInt( await self.parseVariablesInString(options.speed) )
+				self.sendCommand( {
+					Command: 'JoyStickOperation',
+					Params: { PanDirection: 'Stop', PanSpeed: 0, TiltDirection: options.direction, TiltSpeed: speed },
+				})
+				self.sendCommand({ Command: 'GetPTPosition' })
+			} catch (error) {
+				self.log('error', 'action failed: ' + error)				
+			}
 		},
 	}
 
@@ -112,14 +124,20 @@ module.exports = function (self) {
 				type: 'textinput',
 				id: 'speed',
 				default: '2',
-				regex: '/^[0-8]$/'
+				regex: '/^[0-8]$/',
+				useVariables: true,
 			}
 		],
 		callback: async ({options}) => {
-			self.sendCommand( {
-				Command: 'ZoomSwitchOperation',
-				Params: { Direction: options.direction, Speed: parseInt(options.speed) },
-			})
+			try {
+				let speed = parseInt( await self.parseVariablesInString(options.speed) )
+				self.sendCommand( {
+					Command: 'ZoomSwitchOperation',
+					Params: { Direction: options.direction, Speed: speed },
+				})
+			} catch (error) {
+				self.log('error', 'action failed: ' + error)
+			}
 		},
 	}
 
@@ -279,7 +297,8 @@ module.exports = function (self) {
 				type: 'textinput',
 				id: 'preset',
 				default: '1',
-				regex: '/^([0-9]|[1-9][0-9]|100)$/'
+				regex: '/^([0-9]|[1-9][0-9]|100)$/',
+				useVariables: true,
 			},
 			{
 				label: 'Operation',
@@ -294,12 +313,17 @@ module.exports = function (self) {
 			}
 		],
 		callback: async ({options}) => {
-			self.sendCommand( {
-				Command: 'SetPTZPreset',
-				SessionID: self.sessionID,
-				Params: { No: parseInt(options.preset), Operation: options.operation },
-			})
-			self.sendCommand({ Command: 'GetPTPosition' })
+			try {
+				let preset = parseInt( await self.parseVariablesInString(options.preset) )
+				self.sendCommand( {
+					Command: 'SetPTZPreset',
+					SessionID: self.sessionID,
+					Params: { No: preset, Operation: options.operation },
+				})
+				self.sendCommand({ Command: 'GetPTPosition' })
+			} catch (error) {
+				self.log('error', 'action failed: ' + error)
+			}
 		},
 	}
 
@@ -322,13 +346,19 @@ module.exports = function (self) {
 				id: 'position',
 				default: '1',
 				regex: Regex.NUMBER,
+				useVariables: true,
 			}
 		],
 		callback: async ({options}) => {
-			self.sendCommand( {
-				Command: 'SetWebSliderEvent',
-				Params: { Kind: options.kind, Position: parseInt(options.position) },
-			})
+			try {
+				let position = parseInt( await self.parseVariablesInString(options.position) )
+				self.sendCommand( {
+					Command: 'SetWebSliderEvent',
+					Params: { Kind: options.kind, Position: position },
+				})
+			} catch (error) {
+				self.log('error', 'action failed: ' + error)
+			}
 		},
 	}
 	/***Extra options***/
@@ -340,13 +370,19 @@ module.exports = function (self) {
 			type: 'textinput',
 			id: 'position',
 			default: '350',
-			regex: '/^([0-9]|[1-9][0-9]|[1-4][0-9][0-9])$/'
+			regex: '/^([0-9]|[1-9][0-9]|[1-4][0-9][0-9])$/',
+			useVariables: true,
 		}],
 		callback: async ({options}) => {
-			self.sendCommand( {
-				Command: 'SetZoomCtrl', 
-				Params: { Position: options.position }
-			})
+			try {
+				let position = parseInt( await self.parseVariablesInString(options.position) )
+				self.sendCommand( {
+					Command: 'SetZoomCtrl', 
+					Params: { Position: position }
+				})
+			} catch (error) {
+				self.log('error', 'action failed: ' + error)
+			}
 		},
 	}
 
@@ -369,14 +405,20 @@ module.exports = function (self) {
 				type: 'textinput',
 				id: 'position',
 				default: '350',
-				regex: '/^([0-9]|[1-9][0-9]|[1-4][0-9][0-9])$/'
+				regex: '/^([0-9]|[1-9][0-9]|[1-4][0-9][0-9])$/',
+				useVariables: true,
 			}
 		],
 		callback: async ({options}) => {
-			self.sendCommand( {
-				Command: 'SetPresetZoomPosition',
-				Params: { ID: options.positionStore, Position: options.position },
-			})
+			try {
+				let position = parseInt( await self.parseVariablesInString(options.position) )
+				self.sendCommand( {
+					Command: 'SetPresetZoomPosition',
+					Params: { ID: options.positionStore, Position: position },
+				})
+			} catch (error) {
+				self.log('error', 'action failed: ' + error)
+			}
 		},
 	}
 

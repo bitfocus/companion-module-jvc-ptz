@@ -3,6 +3,12 @@ please read HELP.md and LICENSE
 
 # Version History
 
+## v2.1.0 (2024-02-23)
+
+- Feature: make textinput options consume variables
+- Bugfix: fix pan/tilt preset icons
+- Chore: update dependency minimist
+
 ## v2.0.0 (2024-02-20)
 - Major: Update for compatibility with Companion 3.x
 - Feature: Add actions and feedback for tracking functionality
