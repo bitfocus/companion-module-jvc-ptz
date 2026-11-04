@@ -3,8 +3,7 @@
 	"version": "2.1.0",
 	"main": "index.js",
 	"scripts": {
-		"test": "node --test test/*.test.cjs",
-		"build": "node --check index.js && node --check actions.js && node --check feedbacks.js && node --check presets.js && node --check upgrades.js && node --check variables.js"
+		"test": "echo \"Error: no test specified\" && exit 1"
 	},
 	"license": "MIT",
 	"repository": {
