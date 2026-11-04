@@ -11,10 +11,13 @@
 		"url": "git+https://github.com/bitfocus/companion-module-jvc-ptz.git"
 	},
 	"dependencies": {
-		"@companion-module/base": "~1.7.0",
+		"@companion-module/base": "~1.15.0",
 		"urllib": "^3.22.2"
 	},
 	"devDependencies": {
-		"@companion-module/tools": "^2.8.0"
+		"@companion-module/tools": "^2.9.0"
+	},
+	"engines": {
+		"node": "^26.5"
 	}
 }
