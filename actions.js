@@ -27,7 +27,7 @@ module.exports = function (self) {
 			self.tilt = "Stop"
 			self.direction = options.direction
 			try {
-				let speed = parseInt( await self.parseVariablesInString(options.speed) )
+				let speed = parseInt(options.speed)
 				switch (options.direction) {
 					case "RightUp":
 						self.tilt = "Up"
@@ -78,7 +78,7 @@ module.exports = function (self) {
 		],
 		callback: async ({options}) => {
 			try {
-				let speed = parseInt( await self.parseVariablesInString(options.speed) )
+				let speed = parseInt(options.speed)
 				self.sendCommand( {
 					Command: 'JoyStickOperation',
 					Params: { PanDirection: 'Stop', PanSpeed: 0, TiltDirection: options.direction, TiltSpeed: speed },
@@ -130,7 +130,7 @@ module.exports = function (self) {
 		],
 		callback: async ({options}) => {
 			try {
-				let speed = parseInt( await self.parseVariablesInString(options.speed) )
+				let speed = parseInt(options.speed)
 				self.sendCommand( {
 					Command: 'ZoomSwitchOperation',
 					Params: { Direction: options.direction, Speed: speed },
@@ -314,7 +314,7 @@ module.exports = function (self) {
 		],
 		callback: async ({options}) => {
 			try {
-				let preset = parseInt( await self.parseVariablesInString(options.preset) )
+				let preset = parseInt(options.preset)
 				self.sendCommand( {
 					Command: 'SetPTZPreset',
 					SessionID: self.sessionID,
@@ -351,7 +351,7 @@ module.exports = function (self) {
 		],
 		callback: async ({options}) => {
 			try {
-				let position = parseInt( await self.parseVariablesInString(options.position) )
+				let position = parseInt(options.position)
 				self.sendCommand( {
 					Command: 'SetWebSliderEvent',
 					Params: { Kind: options.kind, Position: position },
@@ -375,7 +375,7 @@ module.exports = function (self) {
 		}],
 		callback: async ({options}) => {
 			try {
-				let position = parseInt( await self.parseVariablesInString(options.position) )
+				let position = parseInt(options.position)
 				self.sendCommand( {
 					Command: 'SetZoomCtrl', 
 					Params: { Position: position }
@@ -411,7 +411,7 @@ module.exports = function (self) {
 		],
 		callback: async ({options}) => {
 			try {
-				let position = parseInt( await self.parseVariablesInString(options.position) )
+				let position = parseInt(options.position)
 				self.sendCommand( {
 					Command: 'SetPresetZoomPosition',
 					Params: { ID: options.positionStore, Position: position },

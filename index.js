@@ -138,7 +138,7 @@ class JvcPtzInstance extends InstanceBase {
 				min: 0.5,
 				max: 5000,
 				step: 0.1,
-				isVisible: (opt) => {return opt.polling === true}
+				isVisibleExpression: '$(options:polling) === true'
 			},
 	
 		]
