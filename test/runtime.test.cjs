@@ -71,4 +71,3 @@ test('polling interval visibility uses a host expression', () => {
 	assert.equal(field.isVisible, undefined)
 	assert.equal(field.isVisibleExpression, '$(options:polling) === true')
 })
-
